@@ -20,8 +20,8 @@ class AuthService {
         email: email,
         password: password
       );
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+   
+      WidgetsBinding.instance.addPostFrameCallback((_) {   //Añadido mediante la IA  solo esta linea ya que me estaba dando errores
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const BootPage())
