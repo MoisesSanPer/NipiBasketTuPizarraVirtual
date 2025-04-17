@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "830352231306",
-    "project_id": "nipibaskettupizarravirtual",
-    "storage_bucket": "nipibaskettupizarravirtual.firebasestorage.app"
+    "project_number": "266143210976",
+    "project_id": "nipibasketpizarravirtual",
+    "storage_bucket": "nipibasketpizarravirtual.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:830352231306:android:624047c830e0324fb41673",
+        "mobilesdk_app_id": "1:266143210976:android:fa3bb9ba9e29d945a89f85",
         "android_client_info": {
           "package_name": "com.example.nipibasket_tupizarravirtual"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBzoPQJoZeA8aKBsUSB-unvukT5QVmVCUc"
+          "current_key": "AIzaSyCT2cQTaKoMu2hE5CTonqnbaQpaW0Vo0Hw"
         }
       ],
       "services": {

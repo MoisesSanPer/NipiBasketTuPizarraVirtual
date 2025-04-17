@@ -41,48 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBEUQ_-2MNxJV7GYIUGvHPVLJ1sAr-Dw5I',
-    appId: '1:830352231306:web:9d665d576e24b4f5b41673',
-    messagingSenderId: '830352231306',
-    projectId: 'nipibaskettupizarravirtual',
-    authDomain: 'nipibaskettupizarravirtual.firebaseapp.com',
-    storageBucket: 'nipibaskettupizarravirtual.firebasestorage.app',
-    measurementId: 'G-Z5QB8NS7S2',
+    apiKey: 'AIzaSyDOG_GeG1SIX2JqjLgdJDnjXVBofCHWl48',
+    appId: '1:266143210976:web:8922f6afa005f6d7a89f85',
+    messagingSenderId: '266143210976',
+    projectId: 'nipibasketpizarravirtual',
+    authDomain: 'nipibasketpizarravirtual.firebaseapp.com',
+    storageBucket: 'nipibasketpizarravirtual.firebasestorage.app',
+    measurementId: 'G-P4494W7GD8',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBzoPQJoZeA8aKBsUSB-unvukT5QVmVCUc',
-    appId: '1:830352231306:android:624047c830e0324fb41673',
-    messagingSenderId: '830352231306',
-    projectId: 'nipibaskettupizarravirtual',
-    storageBucket: 'nipibaskettupizarravirtual.firebasestorage.app',
+    apiKey: 'AIzaSyCT2cQTaKoMu2hE5CTonqnbaQpaW0Vo0Hw',
+    appId: '1:266143210976:android:fa3bb9ba9e29d945a89f85',
+    messagingSenderId: '266143210976',
+    projectId: 'nipibasketpizarravirtual',
+    storageBucket: 'nipibasketpizarravirtual.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCZLyOMm_gMsz10QT2LDiufe4vZcUO2f9s',
-    appId: '1:830352231306:ios:68f918dcf05678c3b41673',
-    messagingSenderId: '830352231306',
-    projectId: 'nipibaskettupizarravirtual',
-    storageBucket: 'nipibaskettupizarravirtual.firebasestorage.app',
+    apiKey: 'AIzaSyAA1w-0wXxM7hqtKe2ZrufI-kdEBqWuFKk',
+    appId: '1:266143210976:ios:fdbd12ca0d18aab0a89f85',
+    messagingSenderId: '266143210976',
+    projectId: 'nipibasketpizarravirtual',
+    storageBucket: 'nipibasketpizarravirtual.firebasestorage.app',
     iosBundleId: 'com.example.nipibasketTupizarravirtual',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCZLyOMm_gMsz10QT2LDiufe4vZcUO2f9s',
-    appId: '1:830352231306:ios:68f918dcf05678c3b41673',
-    messagingSenderId: '830352231306',
-    projectId: 'nipibaskettupizarravirtual',
-    storageBucket: 'nipibaskettupizarravirtual.firebasestorage.app',
+    apiKey: 'AIzaSyAA1w-0wXxM7hqtKe2ZrufI-kdEBqWuFKk',
+    appId: '1:266143210976:ios:fdbd12ca0d18aab0a89f85',
+    messagingSenderId: '266143210976',
+    projectId: 'nipibasketpizarravirtual',
+    storageBucket: 'nipibasketpizarravirtual.firebasestorage.app',
     iosBundleId: 'com.example.nipibasketTupizarravirtual',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBEUQ_-2MNxJV7GYIUGvHPVLJ1sAr-Dw5I',
-    appId: '1:830352231306:web:1b5c8ba13598161ab41673',
-    messagingSenderId: '830352231306',
-    projectId: 'nipibaskettupizarravirtual',
-    authDomain: 'nipibaskettupizarravirtual.firebaseapp.com',
-    storageBucket: 'nipibaskettupizarravirtual.firebasestorage.app',
-    measurementId: 'G-KFLGNQ4LJR',
+    apiKey: 'AIzaSyDOG_GeG1SIX2JqjLgdJDnjXVBofCHWl48',
+    appId: '1:266143210976:web:a34c95f0efbe2370a89f85',
+    messagingSenderId: '266143210976',
+    projectId: 'nipibasketpizarravirtual',
+    authDomain: 'nipibasketpizarravirtual.firebaseapp.com',
+    storageBucket: 'nipibasketpizarravirtual.firebasestorage.app',
+    measurementId: 'G-3XKL6FV5X0',
   );
+
 }
