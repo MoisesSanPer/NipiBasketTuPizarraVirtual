@@ -42,6 +42,8 @@ dependencies:
   url_launcher: ^6.1.11
   table_calendar: ^3.0.9
   cloud_firestore: ^5.6.7 
+  video_player: ^2.7.0
+  chewie: ^1.4.0
 
 
 dev_dependencies:

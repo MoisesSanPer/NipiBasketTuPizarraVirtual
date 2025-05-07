@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
+import 'package:nipibasket_tupizarravirtual/pages/VideoPlayer.dart';
 
 class Ejercicios extends StatelessWidget {
   const Ejercicios({super.key});
@@ -93,25 +92,16 @@ Stream<List<Ejercicio>> obtenerEjerciciosComoStream() {
                   ),
                   // Este container es el que se encarga de mostrar la imagen del ejercicio
                   // En este caso no tengo los videos implementados pero lo hare con la libreria de video_player
-                  Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(0),
+                 Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      child: VideoPlayer(
+                        videoURL: ejercicio.videoURL,
+                        height: 200,
                       ),
                     ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Icon(
-                          Icons.play_circle_filled,
-                          size: 60,
-                          color: const Color.fromARGB(255, 122, 103, 165).withOpacity(0.8),
-                        ),
-                      ],
-                    ),
-                  ),
                   // Información del ejercicio
                   Padding(
                     padding: const EdgeInsets.all(16),

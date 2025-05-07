@@ -1,7 +1,5 @@
 // ignore_for_file: file_names, constant_identifier_names
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 enum TipoEjercicio {
   tiro,
   rebote,
@@ -16,7 +14,7 @@ class Ejercicio {
   final String nombre;
   final String descripcion;
   final TipoEjercicio tipo;
-  final String? videoUrl;
+  final String? videoURL;
   final String? idUsuario;
 
   Ejercicio({
@@ -24,7 +22,7 @@ class Ejercicio {
     required this.nombre,
     required this.descripcion,
     required this.tipo,
-    this.videoUrl,
+    this.videoURL,
     this.idUsuario,
   });
 
@@ -38,7 +36,7 @@ class Ejercicio {
         (e) => e.toString() == 'TipoEjercicio.${json['tipo']}',
         orElse: () => TipoEjercicio.tiro,
       ),
-      videoUrl: json['videoUrl'],
+      videoURL: json['videoURL'] as String?, 
       idUsuario: json['idUsuario'],
     );
   }
@@ -49,7 +47,7 @@ class Ejercicio {
       'nombre': nombre,
       'descripcion': descripcion,
       'tipo': tipo.toString().split('.').last,
-      'videoUrl': videoUrl,
+      'videoUrl': videoURL,
       'idUsuario': idUsuario,
     };
   }
@@ -68,7 +66,7 @@ class Ejercicio {
       nombre: nombre ?? this.nombre,
       descripcion: descripcion ?? this.descripcion,
       tipo: tipo ?? this.tipo,
-      videoUrl: videoUrl ?? this.videoUrl,
+      videoURL: videoUrl ?? this.videoURL,
       idUsuario: idUsuario ?? this.idUsuario,
     );
   }
