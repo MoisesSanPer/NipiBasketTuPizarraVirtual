@@ -1,26 +1,41 @@
 // ignore_for_file: use_build_context_synchronously
 
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nipibasket_tupizarravirtual/Boot_page/boot_page.dart';
+import 'package:nipibasket_tupizarravirtual/extensions/extensions.dart';
 import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 
 class AuthService {
+   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> signup({
     required String email,
     required String password,
-    required BuildContext context
+    required BuildContext context,
+    required String username,
   }) async {
     
     try {
 
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password
-      );
-   
+     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password.sha256Hash,
+    );
+      if (userCredential.user == null || userCredential.user?.uid == null) {
+      throw Exception('No se pudo obtener el UID del usuario recién creado');
+  }
+
+       await _firestore.collection('Users').doc(userCredential.user?.uid).set({
+        'email': email,
+        'uuid': userCredential.user?.uid,
+        'username': username,
+      });
+      
       WidgetsBinding.instance.addPostFrameCallback((_) {   //Añadido mediante la IA  solo esta linea ya que me estaba dando errores
         Navigator.pushReplacement(
           context,
@@ -52,7 +67,7 @@ class AuthService {
 
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
-        password: password
+        password: password.sha256Hash
       );    
          WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacement(
@@ -74,12 +89,10 @@ class AuthService {
   }
   }
 
-  Future<void> signout({
+  Future<void> signout ({
     required BuildContext context
   }) async {
-    
     await FirebaseAuth.instance.signOut();
-    await Future.delayed(const Duration(seconds: 1));
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(

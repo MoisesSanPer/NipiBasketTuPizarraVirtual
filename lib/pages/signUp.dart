@@ -12,7 +12,9 @@ class SignUp extends StatefulWidget {
 
 class _signUpState extends State<SignUp> {
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();  
+  final TextEditingController _usernameController = TextEditingController();
+
   final bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -74,7 +76,22 @@ class _signUpState extends State<SignUp> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30),
+                 const SizedBox(height: 30),
+                TextField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    labelText: 'Username',
+                    prefixIcon: Icon(Icons.person, color: Colors.indigo),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -131,6 +148,7 @@ class _signUpState extends State<SignUp> {
                             ? null
                             : () {
                               AuthService().signup(
+                                username: _usernameController.text,
                                 email: _emailController.text,
                                 password: _passwordController.text,
                                 context: context,
