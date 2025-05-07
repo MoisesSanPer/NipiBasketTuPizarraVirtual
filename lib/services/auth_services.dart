@@ -69,12 +69,12 @@ class AuthService {
         email: email,
         password: password.sha256Hash
       );    
-         WidgetsBinding.instance.addPostFrameCallback((_) {
+      
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const BootPage())
-        );
-      });
+        )
+      ;
       
     } on FirebaseAuthException catch(e) {
       String message = _handleAuthError(e);
