@@ -114,6 +114,14 @@ void _launchEmail() async {
   if (await canLaunchUrl(emailLaunchUri)) {
     await launchUrl(emailLaunchUri);
   }
+  else {
+      // Mostrar un Toast o SnackBar si no hay app de correo
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se encontró una aplicación de correo.'),
+        ),
+      );
+  }
 }
 
 

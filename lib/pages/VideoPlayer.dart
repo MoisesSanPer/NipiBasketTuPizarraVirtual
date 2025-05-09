@@ -45,7 +45,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
     }
   }
 
-  //  Inicialización asíncrona  del video
+  //  Inicialización asíncrona  del video 
   Future<void> iniciadorDeVideo() async {
     // Inicializamos el controlador de video con la URL proporcionada
     // y añadimos un listener para manejar errores
