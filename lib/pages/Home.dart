@@ -1,12 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Calendar.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Ejercicios.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Entrenamiento.dart';
 import 'package:nipibasket_tupizarravirtual/pages/SettingsPage.dart';
+import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
+import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final UserCredential userCredential;
+    final EntrenamientoService entrenamientoService;
+    final EjerciciosServices ejerciciosServices;
+  const Home({super.key, required this.userCredential, required this.entrenamientoService, required this.ejerciciosServices});
 
   @override
   State<Home> createState() => _HomeState();
@@ -94,7 +100,9 @@ class _HomeState extends State<Home> {
         onPressed: () => {
            Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) =>  SettingsPage()),
+      MaterialPageRoute(builder: (context) =>  SettingsPage(
+        userCredential: widget.userCredential,
+      )),
     )
         },
       ),
@@ -128,8 +136,8 @@ void _launchEmail() async {
   TabBar get _tabBar =>
       TabBar(tabs: [Tab(text: "Calendar", icon: Icon(Icons.calendar_month)),
       Tab(text: "Ejercicios", icon: Icon(Icons.sports_basketball)),
-       Tab(text: "Entrenamiento", icon: Icon(Icons.bookmark_add_rounded)),
+       Tab(text: "Entrenamiento", icon: Icon(Icons.fitness_center)),
       ]);
 
-  Widget get _body => TabBarView(children: [CalendarScreen(),Ejercicios(),Entrenamiento()]);
+  Widget get _body => TabBarView(children: [CalendarScreen(),Ejercicios(userCredential: widget.userCredential,ejerciciosServices: widget.ejerciciosServices,),Entrenamiento(userCredential: widget.userCredential,entrenamientoService:widget.entrenamientoService ,)]);
 }

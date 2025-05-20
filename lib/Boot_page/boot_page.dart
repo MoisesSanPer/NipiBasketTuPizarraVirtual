@@ -1,23 +1,33 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Home.dart';
+import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
+import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
 
 class BootPage extends StatefulWidget {
-  const BootPage({super.key});
+    final UserCredential userCredential;
+    final String username;
+  const BootPage({super.key, required this.userCredential, required this.username});
 
   @override
   State<BootPage> createState() => _BootPageState();
 }
 
 class _BootPageState extends State<BootPage> {
+    late final EntrenamientoService entrenamientoService;
+    late final EjerciciosServices ejerciciosServices;
+
    @override
   void initState() {
     super.initState();
+        entrenamientoService = EntrenamientoService(widget.userCredential.user);
+        ejerciciosServices = EjerciciosServices(widget.userCredential.user);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 2), () { 
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const Home()),
+            MaterialPageRoute(builder: (context) => Home(userCredential: widget.userCredential, entrenamientoService: entrenamientoService,ejerciciosServices: ejerciciosServices,)),
           );
         
       });

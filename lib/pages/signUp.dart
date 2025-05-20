@@ -33,15 +33,14 @@ class _signUpState extends State<SignUp> {
             ),
           ),
           child: Container(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 10),
                 Text(
                   'Create Account',
                   style: TextStyle(
-                    fontSize: 42,
+                    fontSize: 32,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -76,7 +75,7 @@ class _signUpState extends State<SignUp> {
                     ),
                   ),
                 ),
-                 const SizedBox(height: 30),
+                 const SizedBox(height: 20),
                 TextField(
                   controller: _usernameController,
                   decoration: InputDecoration(
@@ -108,7 +107,7 @@ class _signUpState extends State<SignUp> {
                     fillColor: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -138,10 +137,10 @@ class _signUpState extends State<SignUp> {
                     fillColor: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 40,
                   child: ElevatedButton(
                     onPressed:
                         _isLoading

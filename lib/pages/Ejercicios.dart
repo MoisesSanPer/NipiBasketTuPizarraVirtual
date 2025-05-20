@@ -1,30 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
 import 'package:nipibasket_tupizarravirtual/pages/VideoPlayer.dart';
+import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 
 class Ejercicios extends StatelessWidget {
-  const Ejercicios({super.key});
-Stream<List<Ejercicio>> obtenerEjerciciosComoStream() {
-  return FirebaseFirestore.instance
-      .collection('Ejercicio')
-      .snapshots() // Obtiene un Stream<QuerySnapshot>
-      .map((querySnapshot) {
-        // Convierte cada documento en un Map y luego en String (JSON)
-        final listaDeDatos = querySnapshot.docs
-            .map((doc) => doc.data()).map((data) {
-              // Convierte el Map a un objeto Ejercicio
-              return Ejercicio.fromJson(data);
-            }).toList();
-        
-        return listaDeDatos;
-      });
-}
+  final UserCredential userCredential;
+  final EjerciciosServices ejerciciosServices;
+  const Ejercicios({super.key, required this.userCredential, required this.ejerciciosServices});
+
   @override
   Widget build(BuildContext context)   {
     return Scaffold(
       body: StreamBuilder<List<Ejercicio>>(
-        stream: obtenerEjerciciosComoStream(),
+        stream: ejerciciosServices.obtenerEjerciciosComoStream(),
         builder: (context, snapshot)  {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -126,6 +115,7 @@ Stream<List<Ejercicio>> obtenerEjerciciosComoStream() {
                           style: TextStyle(
                             color: Colors.grey[800],
                             fontSize: 15,
+                            fontWeight: FontWeight.w500
                           ),
                         ),
                         const SizedBox(height: 16),

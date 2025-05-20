@@ -12,7 +12,6 @@ import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 class AuthService {
    final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   Future<void> signup({
     required String email,
     required String password,
@@ -23,9 +22,11 @@ class AuthService {
     try {
 
      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      
       email: email,
       password: password.sha256Hash,
     );
+      await userCredential.user?.updateDisplayName(username);
       if (userCredential.user == null || userCredential.user?.uid == null) {
       throw Exception('No se pudo obtener el UID del usuario recién creado');
   }
@@ -39,7 +40,7 @@ class AuthService {
       WidgetsBinding.instance.addPostFrameCallback((_) {   //Añadido mediante la IA  solo esta linea ya que me estaba dando errores
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const BootPage())
+          MaterialPageRoute(builder: (context) => BootPage(userCredential:userCredential,username:username))
         );
       });
       
@@ -65,14 +66,14 @@ class AuthService {
     
     try {
 
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+       UserCredential userCredential =  await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password.sha256Hash
       );    
       
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const BootPage())
+          MaterialPageRoute(builder: (context) => BootPage( userCredential:userCredential,username:userCredential.user?.displayName ?? ''))
         )
       ;
       

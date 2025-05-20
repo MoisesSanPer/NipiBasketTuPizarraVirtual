@@ -148,7 +148,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
           width: double.infinity,
           height: widget.height,
           child: FittedBox(
-            fit: BoxFit.cover, // Cubre todo el espacio disponible
+            fit: BoxFit.contain, // Cubre todo el espacio disponible
             child: SizedBox(
               width: controladorVideo!.value.aspectRatio * widget.height,
               height: widget.height,

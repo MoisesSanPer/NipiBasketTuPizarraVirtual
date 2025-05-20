@@ -1,6 +1,9 @@
-// ignore_for_file: prefer_final_fields, library_private_types_in_public_api, use_key_in_widget_constructors
+// ignore_for_file: prefer_final_fields, library_private_types_in_public_api, use_key_in_widget_constructors, unused_local_variable, use_build_context_synchronously, deprecated_member_use
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nipibasket_tupizarravirtual/models/Event.class.dart';
+import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 void main() {
@@ -12,9 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Calendario',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-      ),
+      theme: ThemeData(primarySwatch: Colors.purple),
       home: CalendarScreen(),
     );
   }
@@ -26,36 +27,35 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
+  final EntrenamientoService entrenamientoService = EntrenamientoService(
+    FirebaseAuth.instance.currentUser,
+  );
   //Este es el formato del calendario
   CalendarFormat _calendarFormat = CalendarFormat.month;
   //Este es el  dia que estar redondeado del calendario al iniciar
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  final Map<DateTime, List<Event>> _events = {};
+  final Map<DateTime, List<Event>> listevents = {};
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
   }
-//Este metodo es el que se encarga de obtener los entrenamientos del dia seleccionado y este filtrada segun el dia mes y año que clickes 
+
+  //Este metodo es el que se encarga de obtener los entrenamientos del dia seleccionado y este filtrada segun el dia mes y año que clickes
   List<Event> _getEntrenamientosForDay(DateTime fecha) {
-    return _events[DateTime(fecha.year, fecha.month, fecha.day)] ?? [];
+    return listevents[DateTime(fecha.year, fecha.month, fecha.day)] ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [
-          _createCalendar(),
-          Expanded(
-            child: _buildEventList(),
-          ),
-        ],
+        children: [_createCalendar(), Expanded(child: _buildEventList())],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddEventDialog,
+        onPressed: _showAddEntrenamientoDialog,
         child: Icon(Icons.add),
       ),
     );
@@ -78,14 +78,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
           _focusedDay = focusedDay;
         });
       },
-      //Evento que se ejecuta cuando se cambia el formato del calendario 
+      //Evento que se ejecuta cuando se cambia el formato del calendario
       onFormatChanged: (format) {
         setState(() {
           _calendarFormat = format;
         });
       },
-      //Este evento se tiene que poner para que cuando se haga un Hot reload y se haga interactivo el calendario  se actuazlie 
-      //el focus day a uno predertminado 
+      //Este evento se tiene que poner para que cuando se haga un Hot reload y se haga interactivo el calendario  se actuazlie
+      //el focus day a uno predertminado
       onPageChanged: (focusedDay) {
         _focusedDay = focusedDay;
       },
@@ -106,20 +106,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
           shape: BoxShape.circle,
         ),
       ),
-      headerStyle: HeaderStyle(
-        formatButtonVisible: true,
-        titleCentered: true,
-      ),
+      headerStyle: HeaderStyle(formatButtonVisible: true, titleCentered: true),
     );
   }
+
   /// Este metodo es el que se encarga de construir la lista de eventos
   Widget _buildEventList() {
     final events = _getEntrenamientosForDay(_selectedDay ?? _focusedDay);
-
     if (events.isEmpty) {
       return Center(child: Text('No hay entrenamientos  para este día'));
     }
-
     return ListView.builder(
       itemCount: events.length,
       itemBuilder: (context, index) {
@@ -138,83 +134,82 @@ class _CalendarScreenState extends State<CalendarScreen> {
       },
     );
   }
-  //Esdte evento  no es el definitvio ya que lo que voy ha hacer es que se muestre una lista de entrenamientos 
-  //y de ahi se pueda seleccionar el entrenamiento que quieres para cada dia 
-  Future<void> _showAddEventDialog() async {
-    final titleController = TextEditingController();
-    final descController = TextEditingController();
 
+  //Evenento que se ejecuta cuando se pulsa el boton de añadir evento
+  //Este metodo es el que se encarga de mostrar el dialogo para añadir un entrnamiento
+  //En este caso se le pasa el entrenamiento que se ha seleccionado y se añade al calendario
+  Future<void> _showAddEntrenamientoDialog() async {
+    // Obtener la lista de entrenamientos
+    final entrenamientos =
+        await entrenamientoService.obtenerEntrenamientosComoStream().first;
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Añadir Evento'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: 'Título'),
+      builder:
+          (context) => AlertDialog(
+            title: Text('Seleccionar Entrenamiento'),
+            content: SizedBox(
+              //limita el brode lo maximo posible 
+              width: double.maxFinite,
+              child: ListView.builder(
+                //Opcion  para que podamos scrollear en la app y evitar el overflow
+                shrinkWrap: true,
+                itemCount: entrenamientos.length,
+                itemBuilder: (context, index) {
+                  final entrenamiento = entrenamientos[index];
+                  return Card(
+                    margin: EdgeInsets.symmetric(vertical: 6),
+                    child: ListTile(
+                      title: Text(entrenamiento.nombre),
+                      subtitle: Text(
+                        'Ejercicios: ${entrenamiento.ejercicios.length}',
+                      ),
+                      onTap: () {
+                        // Al seleccionar un entrenamiento, lo añadimos al calendario
+                        final newEvent = Event(
+                          title: entrenamiento.nombre,
+                          description:
+                              'Entrenamiento con ${entrenamiento.ejercicios.length} ejercicios',
+                          date: _selectedDay ?? _focusedDay,
+                        );
+                        setState(() {
+                          final day = DateTime(
+                            (_selectedDay ?? _focusedDay).year,
+                            (_selectedDay ?? _focusedDay).month,
+                            (_selectedDay ?? _focusedDay).day,
+                          );
+                          // Añadimos el evento a la lista de eventos del día seleccionado
+                          // Si ya hay eventos, los añadimos a la lista, con los puntos de propagacion basandote en el dia que hayas seleccionado
+                          listevents[day] = [...listevents[day] ?? [], newEvent];
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-            TextField(
-              controller: descController,
-              decoration: InputDecoration(labelText: 'Descripción'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancelar'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancelar'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (titleController.text.isEmpty) return;
-
-              final newEvent = Event(
-                title: titleController.text,
-                description: descController.text,
-                date: _selectedDay ?? _focusedDay,
-              );
-
-              setState(() {
-                final day = DateTime(
-                  (_selectedDay ?? _focusedDay).year,
-                  (_selectedDay ?? _focusedDay).month,
-                  (_selectedDay ?? _focusedDay).day,
-                );
-                
-                _events[day] = [..._events[day] ?? [], newEvent];
-              });
-
-              Navigator.pop(context);
-            },
-            child: Text('Guardar'),
-          ),
-        ],
-      ),
     );
   }
-
+  //Metodo que se encarga de eliminar el evento del calendario en el dia en este caso que tengas añadido
   void _deleteEvent(Event event) {
     setState(() {
+      //Se obtiene el dia del evento y se elimina de la lista de eventos
       final day = DateTime(event.date.year, event.date.month, event.date.day);
-      _events[day]?.removeWhere((e) => e.title == event.title && e.description == event.description);
-      if (_events[day]?.isEmpty ?? false) {
-        _events.remove(day);
+      //Se elimina el evento de la lista de eventos filtrandiolo por el dia
+      //En este caso se elimina el evento que tenga el mismo titulo y la misma descripcion
+      listevents[day]?.removeWhere(
+        (e) => e.title == event.title && e.description == event.description,
+      );
+      if (listevents[day]?.isEmpty ?? false) {
+        listevents.remove(day);
       }
     });
   }
-}
-
-//Example Class to represent an event
-class Event {
-  final String title;
-  final String description;
-  final DateTime date;
-
-  Event({
-    required this.title,
-    required this.description,
-    required this.date,
-  });
 }
