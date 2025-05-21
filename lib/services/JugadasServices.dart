@@ -1,23 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
+import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
 
-class EjerciciosServices {
+class JugadasServices {
   final User? user;
 
-  EjerciciosServices(this.user);
-//Metodo que obtiene los ejercicios de la base de datos
- Stream<List<Ejercicio>> obtenerEjerciciosComoStream() {
+  JugadasServices(this.user);
+//Metodo que obtiene las jugadas de la base de datos
+ Stream<List<Jugada>> obtenerJugadasComoStream() {
   return FirebaseFirestore.instance
-      .collection('Ejercicio')
+      .collection('Jugadas')
       .where('idUsuario', whereIn: ['',user?.uid])
       .snapshots() // Obtiene un Stream<QuerySnapshot>
       .map((querySnapshot) {
         // Convierte cada documento en un Map y luego en String (JSON)
         final listaDeDatos = querySnapshot.docs
             .map((doc) => doc.data()).map((data) {
-              // Convierte el Map a un objeto Ejercicio
-              return Ejercicio.fromJson(data);
+              // Convierte el Map a un objeto Jugada
+              return Jugada.fromJson(data);
             }).toList();
         
         return listaDeDatos;

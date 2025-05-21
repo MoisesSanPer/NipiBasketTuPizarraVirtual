@@ -72,14 +72,52 @@ class Entrenamiento extends StatelessWidget {
                                   Icons.visibility,
                                   color: Colors.blue,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                   showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => AlertDialog(
+                                          title: const Text(
+                                            "Ejercicios del Entrenamiento",
+                                          ),
+                                          content: Column(
+                                            mainAxisSize:
+                                                MainAxisSize
+                                                    .min, 
+                                            children: [
+                                              const SizedBox(height: 10),
+                                              //Ternaria para mostar el mensaje si no hay ejercicios
+                                              Text(
+                                                entrenamientoActual.ejercicios.isEmpty
+                                                    ? 'No hay ejercicios en este entrenamiento'
+                                                    : "Los Ejercicios  incluidos son : \n${entrenamientoActual.ejercicios
+                                                        .map((e) =>" ${e.nombre}")
+                                                        .join(',\n')}",
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed:
+                                                  () => Navigator.pop(context),
+                                              child: const Text("Cerrar"),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                },
                               ),
                               IconButton(
                                 icon: const Icon(
                                   Icons.edit,
                                   color: Colors.orange,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                 showEditDialog(
+                                    context,
+                                    entrenamientoActual,
+                                  );
+                                },
                               ),
                               IconButton(
                                 icon: const Icon(
@@ -160,9 +198,9 @@ class Entrenamiento extends StatelessWidget {
       QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance
               .collection('Entrenamientos')
-              .where('id', isEqualTo: entrenamientoId) 
+              .where('id', isEqualTo: entrenamientoId)
               .get();
-        // Verifica si hay documentos que coincidan los recojes y loss recorres y los bas borrando
+      // Verifica si hay documentos que coincidan los recojes y loss recorres y los bas borrando
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         // Elimina el documento de la colección "Entrenamientos"
         await doc.reference.delete();
@@ -210,7 +248,7 @@ class Entrenamiento extends StatelessWidget {
                         final ejercicios = snapshot.data ?? [];
                         return Column(
                           children:
-                          // Recorre la lista de ejercicios y crea un CheckboxListTile para cada uno
+                              // Recorre la lista de ejercicios y crea un CheckboxListTile para cada uno
                               ejercicios.map((ejercicio) {
                                 // Crear referencia al documento del ejercicio de la lista que recojes
                                 final docRef = FirebaseFirestore.instance
@@ -221,7 +259,7 @@ class Entrenamiento extends StatelessWidget {
                                   // Compara la referencia del ejercicio con la lista de referencias seleccionadas
                                   // y marca el checkbox si está en la lista
                                   value: selectedEjercicioRefs.any(
-                                    (ref) => ref.path == docRef.id,
+                                    (ref) => ref.path == docRef.path,
                                   ),
                                   onChanged: (bool? selected) {
                                     setState(() {
@@ -269,7 +307,7 @@ class Entrenamiento extends StatelessWidget {
                       final nuevoId = Uuid().v4();
                       await FirebaseFirestore.instance
                           .collection('Entrenamientos')
-                          .doc(nuevoId) 
+                          .doc(nuevoId)
                           .set({
                             'id': nuevoId,
                             'nombre': nameController.text,
@@ -303,4 +341,126 @@ class Entrenamiento extends StatelessWidget {
       },
     );
   }
+  Future<void> showEditDialog(BuildContext context, Entrenamientos entrenamiento) async {
+  final nameController = TextEditingController(text: entrenamiento.nombre);
+  final ejerciciosServices = EjerciciosServices(userCredential.user);
+  // Lista de referencias a ejercicios seleccionados
+  // Inicializa la lista de referencias con los ejercicios actuales del entrenamiento
+  // Recorre la lista de ejercicios y crea una referencia a cada uno
+  // y los agregas a la lista de referencias seleccionadas
+final ejercicioSeleccionados = entrenamiento.ejercicios
+    .map((e) => FirebaseFirestore.instance.collection('Ejercicio').doc((e is String ? e : e.id) as String?))
+    .toList();
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Editar Entrenamiento'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre del entrenamiento',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Selecciona ejercicios:'),
+                  const SizedBox(height: 10),
+                  StreamBuilder<List<Ejercicio>>(
+                    stream: ejerciciosServices.obtenerEjerciciosComoStream(),
+                    builder: (context, snapshot) {
+                      final ejercicios = snapshot.data ?? [];
+                      return Column(
+                        children: ejercicios.map((ejercicio) {
+                          //Referencia al documento del ejercicio de la lista que recojes
+                          //Puedes ya que el id es el mismo que el del documento
+                          final docRef = FirebaseFirestore.instance
+                              .collection('Ejercicio')
+                              .doc(ejercicio.id);
+                          return CheckboxListTile(
+                            title: Text(ejercicio.nombre),
+                            // Compara la referencia del ejercicio con la lista de referencias seleccionadas
+                            value: ejercicioSeleccionados.any(
+                              (ref) => ref.path == docRef.path,
+                            ),
+                            onChanged: (bool? selected) {
+                              // Si el checkbox está seleccionado, lo agregas a la lista
+                              // Si no, lo eliminas de la lista
+                              setState(() {
+                                if (selected == true) {
+                                  ejercicioSeleccionados.add(docRef);
+                                } else {
+                                  ejercicioSeleccionados.removeWhere(
+                                    (ref) => ref.path == docRef.path,
+                                  );
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 147, 15, 199),
+                ),
+                onPressed: () async {
+                  if (nameController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('El nombre no puede estar vacío'),
+                      ),
+                    );
+                    return;
+                  }
+                  try {
+                    // Actualiza el entrenamiento en Firestore es la diferencia con el otro
+                    await FirebaseFirestore.instance
+                        .collection('Entrenamientos')
+                        .doc(entrenamiento.id)
+                        .update({
+                          'nombre': nameController.text,
+                          'ejercicios': ejercicioSeleccionados,
+                        });
+
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Entrenamiento actualizado correctamente'),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al actualizar entrenamiento: $e'),
+                      ),
+                    );
+                  }
+                },
+                child: const Text(
+                  'Guardar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 }

@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 import 'package:nipibasket_tupizarravirtual/services/auth_services.dart';
 
 class SignUp extends StatefulWidget {
@@ -20,11 +21,17 @@ class _signUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    //Ajusta el tamaño de la pantalla para evitar el desbordamiento ya que me daba problemas con  overflow de pixeles
+  final alturaPantalla = MediaQuery.of(context).size.height;
+  final anchoPantalla = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         body: Container(
+          //Ajusta el tamaño de la pantalla para evitar el desbordamiento
+        width: double.infinity,
+        height: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -32,15 +39,19 @@ class _signUpState extends State<SignUp> {
               colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
             ),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(10.0),
+          child: SingleChildScrollView(
+            child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: anchoPantalla * 0.10,
+              vertical: alturaPantalla * 0.15,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'Create Account',
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: alturaPantalla * 0.035,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -137,7 +148,23 @@ class _signUpState extends State<SignUp> {
                     fillColor: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  LoginScreen()) );
+                    },
+                    child: Text(
+                      'Already have an account? Sign in',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize:anchoPantalla * 0.045,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   height: 40,
@@ -177,7 +204,8 @@ class _signUpState extends State<SignUp> {
             ),
           ),
         ),
-      ),
+        ),
+      )
     );
   }
 }

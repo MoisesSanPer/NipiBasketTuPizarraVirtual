@@ -1,18 +1,23 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Calendar.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Ejercicios.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Entrenamiento.dart';
+import 'package:nipibasket_tupizarravirtual/pages/Jugadas.dart';
 import 'package:nipibasket_tupizarravirtual/pages/SettingsPage.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
+import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   final UserCredential userCredential;
     final EntrenamientoService entrenamientoService;
     final EjerciciosServices ejerciciosServices;
-  const Home({super.key, required this.userCredential, required this.entrenamientoService, required this.ejerciciosServices});
+    final JugadasServices jugadasServices;
+  const Home({super.key, required this.userCredential, required this.entrenamientoService, required this.ejerciciosServices, required this.jugadasServices});
 
   @override
   State<Home> createState() => _HomeState();
@@ -22,7 +27,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: _appbar,
         body: _body,
@@ -46,6 +51,7 @@ class _HomeState extends State<Home> {
         tooltip: 'Ayuda',
         onPressed:
             () => {
+              //Muestra el alertbox al pulsar el icono de ayuda que es como un Acerca de
               showDialog(
                 context: context,
                 builder:
@@ -58,7 +64,7 @@ class _HomeState extends State<Home> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "Versión: Beta v-1.0.0",
+                              "Versión: Beta v-1.0.1",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 10),
@@ -137,7 +143,8 @@ void _launchEmail() async {
       TabBar(tabs: [Tab(text: "Calendar", icon: Icon(Icons.calendar_month)),
       Tab(text: "Ejercicios", icon: Icon(Icons.sports_basketball)),
        Tab(text: "Entrenamiento", icon: Icon(Icons.fitness_center)),
+       Tab(text: "Jugadas", icon: Icon(Icons.scoreboard))
       ]);
 
-  Widget get _body => TabBarView(children: [CalendarScreen(),Ejercicios(userCredential: widget.userCredential,ejerciciosServices: widget.ejerciciosServices,),Entrenamiento(userCredential: widget.userCredential,entrenamientoService:widget.entrenamientoService ,)]);
+  Widget get _body => TabBarView(children: [CalendarScreen(),Ejercicios(userCredential: widget.userCredential,ejerciciosServices: widget.ejerciciosServices),Entrenamiento(userCredential: widget.userCredential,entrenamientoService:widget.entrenamientoService),Jugadas(userCredential: widget.userCredential,jugadasServices: widget.jugadasServices)]);
 }

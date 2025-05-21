@@ -19,9 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //Ajusta el tamaño de la pantalla para evitar el desbordamiento ya que me daba problemas con  overflow de pixeles
+  final alturaPantalla = MediaQuery.of(context).size.height;
+  final anchoPantalla = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        //Ajusta el tamaño de la pantalla para evitar el desbordamiento
         resizeToAvoidBottomInset: false,
         body: Container(
           decoration: BoxDecoration(
@@ -31,8 +35,12 @@ class _LoginScreenState extends State<LoginScreen> {
               colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
             ),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
+            child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: anchoPantalla * 0.10,
+              vertical: alturaPantalla * 0.15,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -178,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       "Don't have an account?",
                       style: TextStyle(
                         color: const Color.fromARGB(255, 184, 183, 183),
-                        fontSize: 20,
+                        fontSize: anchoPantalla*0.05,
                       ),
                     ),
                     TextButton(
@@ -193,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontSize: anchoPantalla*0.05,
                         ),
                       ),
                     ),
@@ -204,6 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+      )
     );
   }
 }
