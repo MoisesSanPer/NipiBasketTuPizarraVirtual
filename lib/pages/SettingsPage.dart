@@ -3,8 +3,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/models/Usuarios.dart';
 import 'package:nipibasket_tupizarravirtual/services/auth_services.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   final UserCredential userCredential;
@@ -14,10 +16,11 @@ class SettingsPage extends StatelessWidget {
   // Método para obtener el usuario completo de Firestore
   Future<Usuarios?> userProfile() async {
     try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(userCredential.user?.uid)
-          .get();
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(userCredential.user?.uid)
+              .get();
 
       if (userDoc.exists) {
         return Usuarios.fromJson(userDoc.data()!);
@@ -41,7 +44,6 @@ class SettingsPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
-      backgroundColor: Colors.deepPurple[50],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -73,8 +75,7 @@ class SettingsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            userData?.username ?? 
-                            'Usuario',
+                            userData?.username ?? 'Usuario',
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -83,17 +84,65 @@ class SettingsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                             firebaseUser?.email ??
-                            'Correo no disponible',
+                            firebaseUser?.email ?? 'Correo no disponible',
                             style: TextStyle(
-                              fontSize: 16, 
-                              color: Colors.grey[700]
+                              fontSize: 16,
+                              color: Colors.grey[700],
                             ),
                           ),
                         ],
                       );
                     },
                   ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: () {
+                  // Cambia el tema de la aplicación
+                  // al modo oscuro o claro según la configuración actual
+                  // Se le pasa listener false para que no se vuelva a construir el widget
+                  // y no se vuelva a llamar al build
+                  Provider.of<ThemeProvider>(
+                    context,
+                    listen: false,
+                  ).toggleTheme();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple[600],
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 24,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                  shadowColor: Colors.deepPurple.withOpacity(0.3),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Provider.of<ThemeProvider>(
+                                          context,
+                                        ).isDarkMode
+                                        ?
+                    Icon(
+                      Icons.light_mode,
+                      size: 20,
+                    ): Icon(
+                      Icons.dark_mode,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12), 
+                    const Text(
+                      'Cambiar tema',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 40),
@@ -133,42 +182,43 @@ class SettingsPage extends StatelessWidget {
   void dialogoBorrar(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: const Text(
-          'Cerrar sesión',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: const Text(
-          '¿Estás seguro de que quieres salir de tu cuenta?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.deepPurple),
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-          ),
-          TextButton(
-            onPressed: () async {
-              // Aquí se llama al servicio de autenticación para cerrar sesión
-              final AuthService auth = AuthService();
-              Navigator.pop(context);
-              await auth.signout(context: context);
-            },
-            child: const Text(
+            title: const Text(
               'Cerrar sesión',
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            content: const Text(
+              '¿Estás seguro de que quieres salir de tu cuenta?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.deepPurple),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  // Aquí se llama al servicio de autenticación para cerrar sesión
+                  final AuthService auth = AuthService();
+                  Navigator.pop(context);
+                  await auth.signout(context: context);
+                },
+                child: const Text(
+                  'Cerrar sesión',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

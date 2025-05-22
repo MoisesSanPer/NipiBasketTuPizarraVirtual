@@ -40,46 +40,44 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime? _selectedDay;
   Map<DateTime, List<Event>> listevents = {};
 
-
   // Cargar eventos desde SharedPreferences
-Future<void> cargarEvents() async {
-  final prefs = await SharedPreferences.getInstance();
-  //Obtenemos la lista de eventos que tenemos guardados en el SharedPreferences
-  final String? eventsString = prefs.getString('calendar_events');
-  
-  if (eventsString != null) {
-    final Map<String, dynamic> eventsMap = json.decode(eventsString);
-    setState(() {
-      //Asignas a el mapa que tien fechas y eventos el mapeo de la lista de eventos
-      //donde la clave es la fecha y el valor es una lista de eventos
-      //Y devuelves la lista de eventos 
-      listevents = eventsMap.map((key, value) {
-        final DateTime date = DateTime.parse(key);
-        final List<Event> events = (value as List)
-            .map((e) => Event.fromJson(e))
-            .toList();
-        return MapEntry(date, events);
-      });
-    });
-  }
-}
+  Future<void> cargarEvents() async {
+    final prefs = await SharedPreferences.getInstance();
+    //Obtenemos la lista de eventos que tenemos guardados en el SharedPreferences
+    final String? eventsString = prefs.getString('calendar_events');
 
-// Guardar eventos en SharedPreferences
-Future<void> guardarEvents() async {
-  //Instancias de SharedPreferences
-  final prefs = await SharedPreferences.getInstance();
-  //Convertir la lista de eventos a un mapa de tipo string y dynamic 
-  //donde la clave es la fecha y el valor es una lista de eventos
-  final Map<String, dynamic> eventsMap = listevents.map((key, value) {
-    //Mapar la fecha a un string y la lista de eventos a una lista de mapas
-    //donde cada evento es convertido a un mapa
-    return MapEntry(
-      key.toIso8601String(),
-      value.map((e) => e.toJson()).toList(),
-    );
-  });
-  await prefs.setString('calendar_events', json.encode(eventsMap));
-}
+    if (eventsString != null) {
+      final Map<String, dynamic> eventsMap = json.decode(eventsString);
+      setState(() {
+        //Asignas a el mapa que tien fechas y eventos el mapeo de la lista de eventos
+        //donde la clave es la fecha y el valor es una lista de eventos
+        //Y devuelves la lista de eventos
+        listevents = eventsMap.map((key, value) {
+          final DateTime date = DateTime.parse(key);
+          final List<Event> events =
+              (value as List).map((e) => Event.fromJson(e)).toList();
+          return MapEntry(date, events);
+        });
+      });
+    }
+  }
+
+  // Guardar eventos en SharedPreferences
+  Future<void> guardarEvents() async {
+    //Instancias de SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    //Convertir la lista de eventos a un mapa de tipo string y dynamic
+    //donde la clave es la fecha y el valor es una lista de eventos
+    final Map<String, dynamic> eventsMap = listevents.map((key, value) {
+      //Mapar la fecha a un string y la lista de eventos a una lista de mapas
+      //donde cada evento es convertido a un mapa
+      return MapEntry(
+        key.toIso8601String(),
+        value.map((e) => e.toJson()).toList(),
+      );
+    });
+    await prefs.setString('calendar_events', json.encode(eventsMap));
+  }
 
   @override
   void initState() {
@@ -194,7 +192,7 @@ Future<void> guardarEvents() async {
           (context) => AlertDialog(
             title: Text('Seleccionar Entrenamiento'),
             content: SizedBox(
-              //limita el brode lo maximo posible 
+              //limita el brode lo maximo posible
               width: double.maxFinite,
               child: ListView.builder(
                 //Opcion  para que podamos scrollear en la app y evitar el overflow
@@ -207,14 +205,16 @@ Future<void> guardarEvents() async {
                     child: ListTile(
                       title: Text(entrenamiento.nombre),
                       subtitle: Text(
-                        'Ejercicios: ${entrenamiento.ejercicios.length}',
+                        'Ejercicios: ${entrenamiento.ejercicios.length}\n'
+                        'Jugadas: ${entrenamiento.jugadas.length}',
                       ),
+
                       onTap: () {
                         // Al seleccionar un entrenamiento, lo añadimos al calendario
                         final newEvent = Event(
                           title: entrenamiento.nombre,
                           description:
-                              'Entrenamiento con ${entrenamiento.ejercicios.length} ejercicios',
+                              'Entrenamiento con ${entrenamiento.ejercicios.length} ejercicios y con ${entrenamiento.jugadas.length} jugadas',
                           date: _selectedDay ?? _focusedDay,
                         );
                         setState(() {
@@ -225,7 +225,10 @@ Future<void> guardarEvents() async {
                           );
                           // Añadimos el evento a la lista de eventos del día seleccionado
                           // Si ya hay eventos, los añadimos a la lista, con los puntos de propagacion basandote en el dia que hayas seleccionado
-                          listevents[day] = [...listevents[day] ?? [], newEvent];
+                          listevents[day] = [
+                            ...listevents[day] ?? [],
+                            newEvent,
+                          ];
                           // Guardamos los eventos en SharedPreferences
                           guardarEvents();
                         });
@@ -245,6 +248,7 @@ Future<void> guardarEvents() async {
           ),
     );
   }
+
   //Metodo que se encarga de eliminar el evento del calendario en el dia en este caso que tengas añadido
   void _deleteEvent(Event event) {
     setState(() {
@@ -255,10 +259,10 @@ Future<void> guardarEvents() async {
       listevents[day]?.removeWhere(
         (e) => e.title == event.title && e.description == event.description,
       );
-       guardarEvents();
+      guardarEvents();
       if (listevents[day]?.isEmpty ?? false) {
         listevents.remove(day);
-         guardarEvents();
+        guardarEvents();
       }
     });
   }

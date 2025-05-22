@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Calendar.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Ejercicios.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Entrenamiento.dart';
@@ -10,6 +11,7 @@ import 'package:nipibasket_tupizarravirtual/pages/SettingsPage.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
 import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -17,6 +19,7 @@ class Home extends StatefulWidget {
     final EntrenamientoService entrenamientoService;
     final EjerciciosServices ejerciciosServices;
     final JugadasServices jugadasServices;
+    
   const Home({super.key, required this.userCredential, required this.entrenamientoService, required this.ejerciciosServices, required this.jugadasServices});
 
   @override
@@ -24,6 +27,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -37,7 +41,10 @@ class _HomeState extends State<Home> {
   }
 
   AppBar get _appbar => AppBar(
-    backgroundColor: Colors.deepPurple[900],
+    //El color del appbar cambia dependiendo de si el modo oscuro esta activado o no
+    backgroundColor: Provider.of<ThemeProvider>(context).isDarkMode
+      ? Colors.black
+      : Colors.deepPurple[900],
     title: const Text(
       "ÑipiBasket",
       style: TextStyle(

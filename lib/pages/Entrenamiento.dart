@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/Entrenamientos.class.dart';
+import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
+import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
 import 'package:uuid/uuid.dart';
 
 class Entrenamiento extends StatelessWidget {
@@ -94,6 +96,13 @@ class Entrenamiento extends StatelessWidget {
                                                         .map((e) =>" ${e.nombre}")
                                                         .join(',\n')}",
                                               ),
+                                               Text(
+                                                entrenamientoActual.jugadas.isEmpty
+                                                    ? 'No hay jugadas en este entrenamiento'
+                                                    : "Las Jugadas  incluidos son : \n${entrenamientoActual.jugadas
+                                                        .map((e) =>" ${e.nombre}")
+                                                        .join(',\n')}",
+                                              ),
                                             ],
                                           ),
                                           actions: [
@@ -138,6 +147,11 @@ class Entrenamiento extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         'Ejercicios: ${entrenamientoActual.ejercicios.length}',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Jugadas: ${entrenamientoActual.jugadas.length}',
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
                     ],
@@ -219,7 +233,9 @@ class Entrenamiento extends StatelessWidget {
   Future<void> showAddDialog(BuildContext context) async {
     final nameController = TextEditingController();
     final ejerciciosServices = EjerciciosServices(userCredential.user);
-    final selectedEjercicioRefs = <DocumentReference>[]; // Lista de referencias
+    final jugadasServices =JugadasServices(userCredential.user);
+    final selectedEjercicioRefs = <DocumentReference>[]; 
+    final selectedJugadasRefs = <DocumentReference>[]; // Lista de referencias
 
     await showDialog(
       context: context,
@@ -279,6 +295,47 @@ class Entrenamiento extends StatelessWidget {
                         );
                       },
                     ),
+                    const SizedBox(height: 20),
+                    const Text('Selecciona jugadas:'),
+                    const SizedBox(height: 10),
+                    // StreamBuilder para obtener la lista de ejercicios
+                    StreamBuilder<List<Jugada>>(
+                      stream: jugadasServices.obtenerJugadasComoStream(),
+                      builder: (context, snapshot) {
+                        final jugadas = snapshot.data ?? [];
+                        return Column(
+                          children:
+                              // Recorre la lista de ejercicios y crea un CheckboxListTile para cada uno
+                              jugadas.map((jugada) {
+                                // Crear referencia al documento del ejercicio de la lista que recojes
+                                final docRef = FirebaseFirestore.instance
+                                    .collection('Jugadas')
+                                    .doc(jugada.id);
+                                return CheckboxListTile(
+                                  title: Text(jugada.nombre),
+                                  // Compara la referencia del ejercicio con la lista de referencias seleccionadas
+                                  // y marca el checkbox si está en la lista
+                                  value: selectedJugadasRefs.any(
+                                    (ref) => ref.path == docRef.path,
+                                  ),
+                                  onChanged: (bool? selected) {
+                                    setState(() {
+                                      // Si el checkbox está seleccionado, lo agregas a la lista
+                                      // Si no, lo eliminas de la lista
+                                      if (selected == true) {
+                                        selectedJugadasRefs.add(docRef);
+                                      } else {
+                                        selectedJugadasRefs.removeWhere(
+                                          (ref) => ref.path == docRef.path,
+                                        );
+                                      }
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -313,6 +370,7 @@ class Entrenamiento extends StatelessWidget {
                             'nombre': nameController.text,
                             'idUsuario': userCredential.user?.uid,
                             'ejercicios': selectedEjercicioRefs,
+                            'jugadas': selectedJugadasRefs,
                           });
 
                       Navigator.pop(context);
@@ -344,12 +402,16 @@ class Entrenamiento extends StatelessWidget {
   Future<void> showEditDialog(BuildContext context, Entrenamientos entrenamiento) async {
   final nameController = TextEditingController(text: entrenamiento.nombre);
   final ejerciciosServices = EjerciciosServices(userCredential.user);
+  final jugadasServices =JugadasServices(userCredential.user);
   // Lista de referencias a ejercicios seleccionados
   // Inicializa la lista de referencias con los ejercicios actuales del entrenamiento
   // Recorre la lista de ejercicios y crea una referencia a cada uno
   // y los agregas a la lista de referencias seleccionadas
 final ejercicioSeleccionados = entrenamiento.ejercicios
     .map((e) => FirebaseFirestore.instance.collection('Ejercicio').doc((e is String ? e : e.id) as String?))
+    .toList();
+final jugadaSeleccionadas = entrenamiento.jugadas
+    .map((e) => FirebaseFirestore.instance.collection('Jugadas').doc((e is String ? e : e.id) as String?))
     .toList();
   await showDialog(
     context: context,
@@ -406,6 +468,44 @@ final ejercicioSeleccionados = entrenamiento.ejercicios
                       );
                     },
                   ),
+                   const SizedBox(height: 20),
+                  const Text('Selecciona jugadas:'),
+                  const SizedBox(height: 10),
+                  StreamBuilder<List<Jugada>>(
+                    stream: jugadasServices.obtenerJugadasComoStream(),
+                    builder: (context, snapshot) {
+                      final jugadas = snapshot.data ?? [];
+                      return Column(
+                        children: jugadas.map((jugada) {
+                          //Referencia al documento del ejercicio de la lista que recojes
+                          //Puedes ya que el id es el mismo que el del documento
+                          final docRef = FirebaseFirestore.instance
+                              .collection('Jugadas')
+                              .doc(jugada.id);
+                          return CheckboxListTile(
+                            title: Text(jugada.nombre),
+                            // Compara la referencia del ejercicio con la lista de referencias seleccionadas
+                            value: jugadaSeleccionadas.any(
+                              (ref) => ref.path == docRef.path,
+                            ),
+                            onChanged: (bool? selected) {
+                              // Si el checkbox está seleccionado, lo agregas a la lista
+                              // Si no, lo eliminas de la lista
+                              setState(() {
+                                if (selected == true) {
+                                  jugadaSeleccionadas.add(docRef);
+                                } else {
+                                  jugadaSeleccionadas.removeWhere(
+                                    (ref) => ref.path == docRef.path,
+                                  );
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -435,6 +535,7 @@ final ejercicioSeleccionados = entrenamiento.ejercicios
                         .update({
                           'nombre': nameController.text,
                           'ejercicios': ejercicioSeleccionados,
+                          'jugadas': jugadaSeleccionadas,
                         });
 
                     Navigator.pop(context);

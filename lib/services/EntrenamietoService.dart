@@ -28,8 +28,13 @@ class EntrenamientoService {
             final ejercicios = await Entrenamientos.cargarEjercicios(
               doc.data()['ejercicios'],
             );
+              final jugadas = await Entrenamientos.cargarJugadas(
+              doc.data()['jugadas'],
+            );
             //Agregas los ejercicios a la lista de ejercicios del entrenamiento
             entrenamiento.ejercicios.addAll(ejercicios);
+            //Agregas las jugadas a la lista de jugadas del entrenamiento
+             entrenamiento.jugadas.addAll(jugadas);
             //Agregas el entrenamiento a la lista de entrenamientos
             entrenamientos.add(entrenamiento);
           }
