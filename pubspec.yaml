@@ -45,6 +45,7 @@ dependencies:
   video_player: ^2.7.0
   chewie: ^1.4.0
   uuid: ^3.0.7
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:

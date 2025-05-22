@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_final_fields, library_private_types_in_public_api, use_key_in_widget_constructors, unused_local_variable, use_build_context_synchronously, deprecated_member_use
 
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/Event.class.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 void main() {
@@ -35,12 +38,55 @@ class _CalendarScreenState extends State<CalendarScreen> {
   //Este es el  dia que estar redondeado del calendario al iniciar
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  final Map<DateTime, List<Event>> listevents = {};
+  Map<DateTime, List<Event>> listevents = {};
+
+
+  // Cargar eventos desde SharedPreferences
+Future<void> cargarEvents() async {
+  final prefs = await SharedPreferences.getInstance();
+  //Obtenemos la lista de eventos que tenemos guardados en el SharedPreferences
+  final String? eventsString = prefs.getString('calendar_events');
+  
+  if (eventsString != null) {
+    final Map<String, dynamic> eventsMap = json.decode(eventsString);
+    setState(() {
+      //Asignas a el mapa que tien fechas y eventos el mapeo de la lista de eventos
+      //donde la clave es la fecha y el valor es una lista de eventos
+      //Y devuelves la lista de eventos 
+      listevents = eventsMap.map((key, value) {
+        final DateTime date = DateTime.parse(key);
+        final List<Event> events = (value as List)
+            .map((e) => Event.fromJson(e))
+            .toList();
+        return MapEntry(date, events);
+      });
+    });
+  }
+}
+
+// Guardar eventos en SharedPreferences
+Future<void> guardarEvents() async {
+  //Instancias de SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  //Convertir la lista de eventos a un mapa de tipo string y dynamic 
+  //donde la clave es la fecha y el valor es una lista de eventos
+  final Map<String, dynamic> eventsMap = listevents.map((key, value) {
+    //Mapar la fecha a un string y la lista de eventos a una lista de mapas
+    //donde cada evento es convertido a un mapa
+    return MapEntry(
+      key.toIso8601String(),
+      value.map((e) => e.toJson()).toList(),
+    );
+  });
+  await prefs.setString('calendar_events', json.encode(eventsMap));
+}
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
+    // Cargar eventos al iniciar la aplicación
+    cargarEvents();
   }
 
   //Este metodo es el que se encarga de obtener los entrenamientos del dia seleccionado y este filtrada segun el dia mes y año que clickes
@@ -180,6 +226,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           // Añadimos el evento a la lista de eventos del día seleccionado
                           // Si ya hay eventos, los añadimos a la lista, con los puntos de propagacion basandote en el dia que hayas seleccionado
                           listevents[day] = [...listevents[day] ?? [], newEvent];
+                          // Guardamos los eventos en SharedPreferences
+                          guardarEvents();
                         });
                         Navigator.pop(context);
                       },
@@ -207,8 +255,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       listevents[day]?.removeWhere(
         (e) => e.title == event.title && e.description == event.description,
       );
+       guardarEvents();
       if (listevents[day]?.isEmpty ?? false) {
         listevents.remove(day);
+         guardarEvents();
       }
     });
   }

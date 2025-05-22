@@ -37,7 +37,7 @@ class Entrenamientos {
     for (final ref in listRefs.cast<DocumentReference>()) {
       //Guardas cada documento en  la variable  y con el .get() lo traes
       final doc = await ref.get();
-      //El dodumento lo conviertes a un mapa y lo pasas al fromJson
+      //El documento lo conviertes a un mapa y lo pasas al fromJson
       //para que te devuelva el objeto Ejercicio
       //y lo agregas a la lista de ejercicios
         ejercicios.add(Ejercicio.fromJson(doc.data()! as Map<String, dynamic>));
