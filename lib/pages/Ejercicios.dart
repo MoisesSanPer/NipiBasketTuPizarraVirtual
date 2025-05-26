@@ -1,14 +1,24 @@
+// ignore_for_file: use_build_context_synchronously, unnecessary_brace_in_string_interps
+
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/pages/VideoPlayer.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
-class Ejercicios extends StatelessWidget {
+class Ejercicios extends StatefulWidget {
   final UserCredential userCredential;
   final EjerciciosServices ejerciciosServices;
+
   const Ejercicios({
     super.key,
     required this.userCredential,
@@ -16,10 +26,21 @@ class Ejercicios extends StatelessWidget {
   });
 
   @override
+  State<Ejercicios> createState() => _EjerciciosState();
+}
+
+class _EjerciciosState extends State<Ejercicios> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => agregarEjercicio(context),
+        backgroundColor: Colors.deepPurple,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: StreamBuilder<List<Ejercicio>>(
-        stream: ejerciciosServices.obtenerEjerciciosComoStream(),
+        stream: widget.ejerciciosServices.obtenerEjerciciosComoStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -155,6 +176,242 @@ class Ejercicios extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  // Método para mostrar el diálogo de agregar ejercicio
+  void agregarEjercicio(BuildContext context) {
+    final TextEditingController nombreController = TextEditingController();
+    final TextEditingController descripcionController = TextEditingController();
+    TipoEjercicio? tipoSeleccionado = TipoEjercicio.tiro;
+    File? selectedImage;
+    showDialog(
+      context: context,
+      builder: (context) {
+        // Usar StatefulBuilder para manejar el estado del diálogo y que no se buguee con el de la aplicacion
+        //Ayudado por IA ya que al usar el showDialog no se actualizaba el estado del dialogo y no encontraba solucion
+        return StatefulBuilder(
+          builder: (context, setState) {
+            //Método para subir video desde la galería es sacado del cambiar imagne que tengo en Settings Page
+            // y adaptado para subir videos
+            Future<void> subirVideo() async {
+              var permission = await Permission.photos.request();
+              if (permission.isRestricted) {
+                permission = await Permission.photos.request();
+              }
+              if (permission.isGranted) {
+                final ImagePicker picker = ImagePicker();
+                // Usar ImagePicker para seleccionar un video de la galería en vez de imagen
+                final XFile? video = await picker.pickVideo(
+                  source: ImageSource.gallery,
+                );
+                if (video != null) {
+                  setState(() {
+                    selectedImage = File(video.path);
+                  });
+                }
+              } else if (permission.isDenied) {
+                await openAppSettings();
+              }
+            }
+
+            return AlertDialog(
+              title: const Text(
+                'Nuevo Ejercicio',
+                style: TextStyle(color: Colors.deepPurple, fontSize: 22),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nombreController,
+                      decoration: InputDecoration(
+                        labelText: 'Nombre',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                      ),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: descripcionController,
+                      decoration: InputDecoration(
+                        labelText: 'Descripción',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      maxLines: 3,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Tipo de ejercicio:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Lista de tipos de ejercicios sacado de la documentacion cada uno de los tipos de ejercicio
+                        // Si clickas en uno de los tipos de ejercicio se selecciona y se cambia el estado
+                        RadioListTile<TipoEjercicio>(
+                          value: TipoEjercicio.tiro,
+                          groupValue: tipoSeleccionado,
+                          onChanged: (TipoEjercicio? value) {
+                            setState(() {
+                              tipoSeleccionado = value;
+                            });
+                          },
+                          title: const Text('Tiro'),
+                        ),
+                        RadioListTile<TipoEjercicio>(
+                          value: TipoEjercicio.defensa,
+                          groupValue: tipoSeleccionado,
+                          onChanged: (TipoEjercicio? value) {
+                            setState(() {
+                              tipoSeleccionado = value;
+                            });
+                          },
+                          title: const Text('Defensa'),
+                        ),
+                        RadioListTile<TipoEjercicio>(
+                          value: TipoEjercicio.botar,
+                          groupValue: tipoSeleccionado,
+                          onChanged: (TipoEjercicio? value) {
+                            setState(() {
+                              tipoSeleccionado = value;
+                            });
+                          },
+                          title: const Text('Botar'),
+                        ),
+                        RadioListTile<TipoEjercicio>(
+                          value: TipoEjercicio.pase,
+                          groupValue: tipoSeleccionado,
+                          onChanged: (TipoEjercicio? value) {
+                            setState(() {
+                              tipoSeleccionado = value;
+                            });
+                          },
+                          title: const Text('Pase'),
+                        ),
+                        RadioListTile<TipoEjercicio>(
+                          value: TipoEjercicio.rebote,
+                          groupValue: tipoSeleccionado,
+                          onChanged: (TipoEjercicio? value) {
+                            setState(() {
+                              tipoSeleccionado = value;
+                            });
+                          },
+                          title: const Text('Rebote'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Botón para subir el video
+                    ElevatedButton(
+                      onPressed: () async {
+                        await subirVideo();
+                      },
+                      child: const Text('Seleccionar Video'),
+                    ),
+                    const SizedBox(height: 16),
+                    // Vista previa del video seleccionado
+                    // Si hay un video seleccionado, mostrarlo
+                    if (selectedImage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: VideoPlayer(videoURL: selectedImage?.path),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 147, 15, 199),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (nombreController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('El nombre es requerido')),
+                      );
+                      return;
+                    }
+                    Navigator.pop(context);
+                    String url = "";
+                   final nuevoId = Uuid().v4();
+                    if (selectedImage != null) {
+                      try {
+                        // Subir video a Firebase Storage formato .mp4
+                        final storageRef = FirebaseStorage.instance.ref().child(
+                          '${nuevoId}${nombreController.text}.mp4',
+                        );
+                        // Subir el archivo seleccionado a Firebase Storage
+                        await storageRef.putFile(selectedImage!);
+                        // Obtener la URL de descarga del video
+                        url = await storageRef.getDownloadURL();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error al subir imagen: $e')),
+                        );
+                        return;
+                      }
+                    }
+                
+                    // Guardar el ejercicio en Firestore
+                    await FirebaseFirestore.instance
+                        .collection('Ejercicio')
+                        .doc(nuevoId)
+                        .set({
+                          'id': nuevoId,
+                          'nombre': nombreController.text,
+                          'descripcion': descripcionController.text,
+                          'tipo': tipoSeleccionado.toString().split('.').last,
+                          'videoURL': url,
+                          'idUsuario': widget.userCredential.user?.uid,
+                        });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: const Text(
+                    'Añadir Ejercicio',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

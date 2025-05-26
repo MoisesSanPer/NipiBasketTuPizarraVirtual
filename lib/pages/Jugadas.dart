@@ -1,15 +1,24 @@
+// ignore_for_file: use_build_context_synchronously, unnecessary_brace_in_string_interps
+
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart'
     show ThemeProvider;
 import 'package:nipibasket_tupizarravirtual/pages/VideoPlayer.dart';
 import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
-class Jugadas extends StatelessWidget {
+import 'package:uuid/uuid.dart';
+class Jugadas extends StatefulWidget {
   final UserCredential userCredential;
   final JugadasServices jugadasServices;
+
   const Jugadas({
     super.key,
     required this.userCredential,
@@ -17,10 +26,21 @@ class Jugadas extends StatelessWidget {
   });
 
   @override
+  State<Jugadas> createState() => _JugadasState();
+}
+class _JugadasState extends State<Jugadas> {
+ 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+        onPressed: () => agregarJugada(context),
+        backgroundColor: Colors.deepPurple,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: StreamBuilder<List<Jugada>>(
-        stream: jugadasServices.obtenerJugadasComoStream(),
+        stream: widget.jugadasServices.obtenerJugadasComoStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -158,4 +178,212 @@ class Jugadas extends StatelessWidget {
       ),
     );
   }
+  
+  // Método para mostrar el diálogo de agregar ejercicio
+  void agregarJugada(BuildContext context) {
+    final TextEditingController nombreController = TextEditingController();
+    final TextEditingController descripcionController = TextEditingController();
+    TipoJugada? tipoSeleccionado = TipoJugada.ataque; // Tipo de jugada por defecto
+    File? selectedVideo;
+    showDialog(
+      context: context,
+      builder: (context) {
+        // Usar StatefulBuilder para manejar el estado del diálogo y que no se buguee con el de la aplicacion
+        //Ayudado por IA ya que al usar el showDialog no se actualizaba el estado del dialogo y no encontraba solucion
+        return StatefulBuilder(
+          builder: (context, setState) {
+            //Método para subir video desde la galería es sacado del cambiar imagne que tengo en Settings Page
+            // y adaptado para subir videos
+            Future<void> subirVideo() async {
+              var permission = await Permission.photos.request();
+              if (permission.isRestricted) {
+                permission = await Permission.photos.request();
+              }
+              if (permission.isGranted) {
+                final ImagePicker picker = ImagePicker();
+                // Usar ImagePicker para seleccionar un video de la galería en vez de imagen
+                final XFile? video = await picker.pickVideo(
+                  source: ImageSource.gallery,
+                );
+                if (video != null) {
+                  setState(() {
+                    selectedVideo = File(video.path);
+                  });
+                }
+              } else if (permission.isDenied) {
+                await openAppSettings();
+              }
+            }
+
+            return AlertDialog(
+              title: const Text(
+                'Nueva Jugada',
+                style: TextStyle(color: Colors.deepPurple, fontSize: 22),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nombreController,
+                      decoration: InputDecoration(
+                        labelText: 'Nombre',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                      ),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: descripcionController,
+                      decoration: InputDecoration(
+                        labelText: 'Descripción',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      maxLines: 3,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Tipo de ejercicio:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Lista de tipos de ejercicios sacado de la documentacion cada uno de los tipos de ejercicio
+                        // Si clickas en uno de los tipos de ejercicio se selecciona y se cambia el estado
+                        RadioListTile<TipoJugada>(
+                          value: TipoJugada.ataque,
+                          groupValue: tipoSeleccionado,
+                          onChanged: (TipoJugada? value) {
+                            setState(() {
+                              tipoSeleccionado = value;
+                            });
+                          },
+                          title: const Text('Ataque'),
+                        ),
+                        RadioListTile<TipoJugada>(
+                          value: TipoJugada.defensa,
+                          groupValue: tipoSeleccionado,
+                          onChanged: (TipoJugada? value) {
+                            setState(() {
+                              tipoSeleccionado = value;
+                            });
+                          },
+                          title: const Text('Defensa'),
+                        ),   
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Botón para subir el video
+                    ElevatedButton(
+                      onPressed: () async {
+                        await subirVideo();
+                      },
+                      child: const Text('Seleccionar Video'),
+                    ),
+                    const SizedBox(height: 16),
+                    // Vista previa del video seleccionado
+                    // Si hay un video seleccionado, mostrarlo
+                    if (selectedVideo != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: VideoPlayer(videoURL: selectedVideo?.path),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 147, 15, 199),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (nombreController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('El nombre es requerido')),
+                      );
+                      return;
+                    }
+                    Navigator.pop(context);
+                    String url = "";
+                    final nuevoId = Uuid().v4();
+                    if (selectedVideo != null) {
+                      try {
+                        // Subir video a Firebase Storage formato .mp4
+                        final storageRef = FirebaseStorage.instance.ref().child(
+                          '${nuevoId}${nombreController.text}.mp4',
+                        );
+                        // Subir el archivo seleccionado a Firebase Storage
+                        await storageRef.putFile(selectedVideo!);
+                        // Obtener la URL de descarga del video
+                        url = await storageRef.getDownloadURL();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error al subir imagen: $e')),
+                        );
+                        return;
+                      }
+                    }
+                  
+                    // Guardar el ejercicio en Firestore
+                    await FirebaseFirestore.instance
+                        .collection('Jugadas')
+                        .doc(nuevoId)
+                        .set({
+                          'id': nuevoId,
+                          'nombre': nombreController.text,
+                          'descripcion': descripcionController.text,
+                          'tipo': tipoSeleccionado.toString().split('.').last,
+                          'videoURL': url,
+                          'idUsuario': widget.userCredential.user?.uid,
+                        });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: const Text(
+                    'Añadir Jugada',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
+
+

@@ -75,41 +75,130 @@ class Entrenamiento extends StatelessWidget {
                                   color: Colors.blue,
                                 ),
                                 onPressed: () {
-                                   showDialog(
+                                  showDialog(
                                     context: context,
                                     builder:
                                         (context) => AlertDialog(
                                           title: const Text(
                                             "Ejercicios del Entrenamiento",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  Colors
+                                                      .blue, // Puedes cambiar el color
+                                            ),
                                           ),
-                                          content: Column(
-                                            mainAxisSize:
-                                                MainAxisSize
-                                                    .min, 
-                                            children: [
-                                              const SizedBox(height: 10),
-                                              //Ternaria para mostar el mensaje si no hay ejercicios
-                                              Text(
-                                                entrenamientoActual.ejercicios.isEmpty
-                                                    ? 'No hay ejercicios en este entrenamiento'
-                                                    : "Los Ejercicios  incluidos son : \n${entrenamientoActual.ejercicios
-                                                        .map((e) =>" ${e.nombre}")
-                                                        .join(',\n')}",
-                                              ),
-                                               Text(
-                                                entrenamientoActual.jugadas.isEmpty
-                                                    ? 'No hay jugadas en este entrenamiento'
-                                                    : "Las Jugadas  incluidos son : \n${entrenamientoActual.jugadas
-                                                        .map((e) =>" ${e.nombre}")
-                                                        .join(',\n')}",
-                                              ),
-                                            ],
+                                          content: SingleChildScrollView(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const SizedBox(height: 10),
+                                                if (entrenamientoActual
+                                                    .ejercicios
+                                                    .isEmpty)
+                                                  const Text(
+                                                    'No hay ejercicios en este entrenamiento',
+                                                    style: TextStyle(
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                    ),
+                                                  )
+                                                else
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Text(
+                                                        "Ejercicios incluidos:",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      ...entrenamientoActual
+                                                          .ejercicios
+                                                          .map(
+                                                            (e) => Padding(
+                                                              padding:
+                                                                  const EdgeInsets.only(
+                                                                    left: 8,
+                                                                    bottom: 4,
+                                                                  ),
+                                                              child: Text(
+                                                                "• ${e.nombre}",
+                                                                style:
+                                                                    const TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                    ],
+                                                  ),
+                                                const SizedBox(height: 16),
+                                                if (entrenamientoActual
+                                                    .jugadas
+                                                    .isEmpty)
+                                                  const Text(
+                                                    'No hay jugadas en este entrenamiento',
+                                                    style: TextStyle(
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                    ),
+                                                  )
+                                                else
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Text(
+                                                        "Jugadas incluidas:",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      ...entrenamientoActual
+                                                          .jugadas
+                                                          .map(
+                                                            (e) => Padding(
+                                                              padding:
+                                                                  const EdgeInsets.only(
+                                                                    left: 8.0,
+                                                                    bottom: 4,
+                                                                  ),
+                                                              child: Text(
+                                                                "• ${e.nombre}",
+                                                                style:
+                                                                    const TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                    ],
+                                                  ),
+                                              ],
+                                            ),
                                           ),
                                           actions: [
                                             TextButton(
                                               onPressed:
                                                   () => Navigator.pop(context),
-                                              child: const Text("Cerrar"),
+                                              child: const Text(
+                                                "Cerrar",
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                ), 
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -122,10 +211,7 @@ class Entrenamiento extends StatelessWidget {
                                   color: Colors.orange,
                                 ),
                                 onPressed: () {
-                                 showEditDialog(
-                                    context,
-                                    entrenamientoActual,
-                                  );
+                                  showEditDialog(context, entrenamientoActual);
                                 },
                               ),
                               IconButton(
@@ -233,8 +319,8 @@ class Entrenamiento extends StatelessWidget {
   Future<void> showAddDialog(BuildContext context) async {
     final nameController = TextEditingController();
     final ejerciciosServices = EjerciciosServices(userCredential.user);
-    final jugadasServices =JugadasServices(userCredential.user);
-    final selectedEjercicioRefs = <DocumentReference>[]; 
+    final jugadasServices = JugadasServices(userCredential.user);
+    final selectedEjercicioRefs = <DocumentReference>[];
     final selectedJugadasRefs = <DocumentReference>[]; // Lista de referencias
 
     await showDialog(
@@ -399,169 +485,189 @@ class Entrenamiento extends StatelessWidget {
       },
     );
   }
-  Future<void> showEditDialog(BuildContext context, Entrenamientos entrenamiento) async {
-  final nameController = TextEditingController(text: entrenamiento.nombre);
-  final ejerciciosServices = EjerciciosServices(userCredential.user);
-  final jugadasServices =JugadasServices(userCredential.user);
-  // Lista de referencias a ejercicios seleccionados
-  // Inicializa la lista de referencias con los ejercicios actuales del entrenamiento
-  // Recorre la lista de ejercicios y crea una referencia a cada uno
-  // y los agregas a la lista de referencias seleccionadas
-final ejercicioSeleccionados = entrenamiento.ejercicios
-    .map((e) => FirebaseFirestore.instance.collection('Ejercicio').doc((e is String ? e : e.id) as String?))
-    .toList();
-final jugadaSeleccionadas = entrenamiento.jugadas
-    .map((e) => FirebaseFirestore.instance.collection('Jugadas').doc((e is String ? e : e.id) as String?))
-    .toList();
-  await showDialog(
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Editar Entrenamiento'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre del entrenamiento',
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text('Selecciona ejercicios:'),
-                  const SizedBox(height: 10),
-                  StreamBuilder<List<Ejercicio>>(
-                    stream: ejerciciosServices.obtenerEjerciciosComoStream(),
-                    builder: (context, snapshot) {
-                      final ejercicios = snapshot.data ?? [];
-                      return Column(
-                        children: ejercicios.map((ejercicio) {
-                          //Referencia al documento del ejercicio de la lista que recojes
-                          //Puedes ya que el id es el mismo que el del documento
-                          final docRef = FirebaseFirestore.instance
-                              .collection('Ejercicio')
-                              .doc(ejercicio.id);
-                          return CheckboxListTile(
-                            title: Text(ejercicio.nombre),
-                            // Compara la referencia del ejercicio con la lista de referencias seleccionadas
-                            value: ejercicioSeleccionados.any(
-                              (ref) => ref.path == docRef.path,
-                            ),
-                            onChanged: (bool? selected) {
-                              // Si el checkbox está seleccionado, lo agregas a la lista
-                              // Si no, lo eliminas de la lista
-                              setState(() {
-                                if (selected == true) {
-                                  ejercicioSeleccionados.add(docRef);
-                                } else {
-                                  ejercicioSeleccionados.removeWhere(
-                                    (ref) => ref.path == docRef.path,
-                                  );
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                   const SizedBox(height: 20),
-                  const Text('Selecciona jugadas:'),
-                  const SizedBox(height: 10),
-                  StreamBuilder<List<Jugada>>(
-                    stream: jugadasServices.obtenerJugadasComoStream(),
-                    builder: (context, snapshot) {
-                      final jugadas = snapshot.data ?? [];
-                      return Column(
-                        children: jugadas.map((jugada) {
-                          //Referencia al documento del ejercicio de la lista que recojes
-                          //Puedes ya que el id es el mismo que el del documento
-                          final docRef = FirebaseFirestore.instance
-                              .collection('Jugadas')
-                              .doc(jugada.id);
-                          return CheckboxListTile(
-                            title: Text(jugada.nombre),
-                            // Compara la referencia del ejercicio con la lista de referencias seleccionadas
-                            value: jugadaSeleccionadas.any(
-                              (ref) => ref.path == docRef.path,
-                            ),
-                            onChanged: (bool? selected) {
-                              // Si el checkbox está seleccionado, lo agregas a la lista
-                              // Si no, lo eliminas de la lista
-                              setState(() {
-                                if (selected == true) {
-                                  jugadaSeleccionadas.add(docRef);
-                                } else {
-                                  jugadaSeleccionadas.removeWhere(
-                                    (ref) => ref.path == docRef.path,
-                                  );
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 147, 15, 199),
-                ),
-                onPressed: () async {
-                  if (nameController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('El nombre no puede estar vacío'),
-                      ),
-                    );
-                    return;
-                  }
-                  try {
-                    // Actualiza el entrenamiento en Firestore es la diferencia con el otro
-                    await FirebaseFirestore.instance
-                        .collection('Entrenamientos')
-                        .doc(entrenamiento.id)
-                        .update({
-                          'nombre': nameController.text,
-                          'ejercicios': ejercicioSeleccionados,
-                          'jugadas': jugadaSeleccionadas,
-                        });
 
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Entrenamiento actualizado correctamente'),
+  Future<void> showEditDialog(
+    BuildContext context,
+    Entrenamientos entrenamiento,
+  ) async {
+    final nameController = TextEditingController(text: entrenamiento.nombre);
+    final ejerciciosServices = EjerciciosServices(userCredential.user);
+    final jugadasServices = JugadasServices(userCredential.user);
+    // Lista de referencias a ejercicios seleccionados
+    // Inicializa la lista de referencias con los ejercicios actuales del entrenamiento
+    // Recorre la lista de ejercicios y crea una referencia a cada uno
+    // y los agregas a la lista de referencias seleccionadas
+    final ejercicioSeleccionados =
+        entrenamiento.ejercicios
+            .map(
+              (e) => FirebaseFirestore.instance
+                  .collection('Ejercicio')
+                  .doc((e is String ? e : e.id) as String?),
+            )
+            .toList();
+    final jugadaSeleccionadas =
+        entrenamiento.jugadas
+            .map(
+              (e) => FirebaseFirestore.instance
+                  .collection('Jugadas')
+                  .doc((e is String ? e : e.id) as String?),
+            )
+            .toList();
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Editar Entrenamiento'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre del entrenamiento',
                       ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error al actualizar entrenamiento: $e'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text(
-                  'Guardar',
-                  style: TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text('Selecciona ejercicios:'),
+                    const SizedBox(height: 10),
+                    StreamBuilder<List<Ejercicio>>(
+                      stream: ejerciciosServices.obtenerEjerciciosComoStream(),
+                      builder: (context, snapshot) {
+                        final ejercicios = snapshot.data ?? [];
+                        return Column(
+                          children:
+                              ejercicios.map((ejercicio) {
+                                //Referencia al documento del ejercicio de la lista que recojes
+                                //Puedes ya que el id es el mismo que el del documento
+                                final docRef = FirebaseFirestore.instance
+                                    .collection('Ejercicio')
+                                    .doc(ejercicio.id);
+                                return CheckboxListTile(
+                                  title: Text(ejercicio.nombre),
+                                  // Compara la referencia del ejercicio con la lista de referencias seleccionadas
+                                  value: ejercicioSeleccionados.any(
+                                    (ref) => ref.path == docRef.path,
+                                  ),
+                                  onChanged: (bool? selected) {
+                                    // Si el checkbox está seleccionado, lo agregas a la lista
+                                    // Si no, lo eliminas de la lista
+                                    setState(() {
+                                      if (selected == true) {
+                                        ejercicioSeleccionados.add(docRef);
+                                      } else {
+                                        ejercicioSeleccionados.removeWhere(
+                                          (ref) => ref.path == docRef.path,
+                                        );
+                                      }
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    const Text('Selecciona jugadas:'),
+                    const SizedBox(height: 10),
+                    StreamBuilder<List<Jugada>>(
+                      stream: jugadasServices.obtenerJugadasComoStream(),
+                      builder: (context, snapshot) {
+                        final jugadas = snapshot.data ?? [];
+                        return Column(
+                          children:
+                              jugadas.map((jugada) {
+                                //Referencia al documento del ejercicio de la lista que recojes
+                                //Puedes ya que el id es el mismo que el del documento
+                                final docRef = FirebaseFirestore.instance
+                                    .collection('Jugadas')
+                                    .doc(jugada.id);
+                                return CheckboxListTile(
+                                  title: Text(jugada.nombre),
+                                  // Compara la referencia del ejercicio con la lista de referencias seleccionadas
+                                  value: jugadaSeleccionadas.any(
+                                    (ref) => ref.path == docRef.path,
+                                  ),
+                                  onChanged: (bool? selected) {
+                                    // Si el checkbox está seleccionado, lo agregas a la lista
+                                    // Si no, lo eliminas de la lista
+                                    setState(() {
+                                      if (selected == true) {
+                                        jugadaSeleccionadas.add(docRef);
+                                      } else {
+                                        jugadaSeleccionadas.removeWhere(
+                                          (ref) => ref.path == docRef.path,
+                                        );
+                                      }
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 147, 15, 199),
+                  ),
+                  onPressed: () async {
+                    if (nameController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('El nombre no puede estar vacío'),
+                        ),
+                      );
+                      return;
+                    }
+                    try {
+                      // Actualiza el entrenamiento en Firestore es la diferencia con el otro
+                      await FirebaseFirestore.instance
+                          .collection('Entrenamientos')
+                          .doc(entrenamiento.id)
+                          .update({
+                            'nombre': nameController.text,
+                            'ejercicios': ejercicioSeleccionados,
+                            'jugadas': jugadaSeleccionadas,
+                          });
+
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Entrenamiento actualizado correctamente',
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Error al actualizar entrenamiento: $e',
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Guardar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
