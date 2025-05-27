@@ -41,4 +41,39 @@ class EntrenamientoService {
           return entrenamientos;
         });
   }
+  //Metodo para agregar un entrenamiento a la base de datos
+  Future<void> agregarEntrenamiento(Entrenamientos entrenamiento, List<DocumentReference> selectedEjercicioRefs,List<DocumentReference> selectedJugadasRefs) async {
+    await FirebaseFirestore.instance
+        .collection('Entrenamientos')
+        .doc(entrenamiento.id)
+        .set({
+          'id': entrenamiento.id,
+          'nombre': entrenamiento.nombre,
+          'ejercicios': selectedEjercicioRefs,
+          'jugadas': selectedJugadasRefs,
+          'idUsuario': user?.uid,
+        });
+  }
+  Future<void> editarEntrenamiento(Entrenamientos entrenamiento, List<DocumentReference> selectedEjercicioRefs,List<DocumentReference> selectedJugadasRefs) async {
+    await FirebaseFirestore.instance
+        .collection('Entrenamientos')
+        .doc(entrenamiento.id)
+        .update({
+          'nombre': entrenamiento.nombre,
+          'ejercicios': selectedEjercicioRefs,
+          'jugadas': selectedJugadasRefs,
+        });
+  }
+  Future<void> eliminarEntrenamiento(String id) async {
+        QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('Entrenamientos')
+              .where('id', isEqualTo: id)
+              .get();
+      // Verifica si hay documentos que coincidan los recojes y loss recorres y los bas borrando
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        // Elimina el documento de la colección "Entrenamientos"
+        await doc.reference.delete();
+      }
+  }
 }

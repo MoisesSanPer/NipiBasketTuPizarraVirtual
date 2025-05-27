@@ -23,4 +23,18 @@ class JugadasServices {
         return listaDeDatos;
       });
 }
+  //Metodo para agregar una jugada a la base de datos
+  Future<void> agregarJugada(Jugada jugada) async {
+    await FirebaseFirestore.instance
+        .collection('Jugadas')
+        .doc(jugada.id)
+        .set({
+          'id': jugada.id,
+          'nombre': jugada.nombre,
+          'descripcion': jugada.descripcion,
+          'tipo': jugada.tipo.toString().split('.').last,
+          'videoURL': jugada.videoURL,
+          'idUsuario': user?.uid,
+        });
+  }
 }

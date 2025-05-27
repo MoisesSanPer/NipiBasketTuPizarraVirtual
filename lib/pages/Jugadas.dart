@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -348,19 +347,18 @@ class _JugadasState extends State<Jugadas> {
                         return;
                       }
                     }
-                  
-                    // Guardar el ejercicio en Firestore
-                    await FirebaseFirestore.instance
-                        .collection('Jugadas')
-                        .doc(nuevoId)
-                        .set({
-                          'id': nuevoId,
-                          'nombre': nombreController.text,
-                          'descripcion': descripcionController.text,
-                          'tipo': tipoSeleccionado.toString().split('.').last,
-                          'videoURL': url,
-                          'idUsuario': widget.userCredential.user?.uid,
-                        });
+                   final nuevaJugada = Jugada(
+                      id: nuevoId,
+                      nombre: nombreController.text,
+                      descripcion: descripcionController.text,
+                      tipo: tipoSeleccionado ?? TipoJugada.ataque,
+                      videoURL: url,
+                    );
+                    // Llamar al servicio para agregar la jugada
+                    await widget.jugadasServices.agregarJugada(nuevaJugada);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Jugada añadida')),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,

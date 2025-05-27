@@ -295,20 +295,13 @@ class Entrenamiento extends StatelessWidget {
     BuildContext context,
   ) async {
     try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('Entrenamientos')
-              .where('id', isEqualTo: entrenamientoId)
-              .get();
-      // Verifica si hay documentos que coincidan los recojes y loss recorres y los bas borrando
-      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-        // Elimina el documento de la colección "Entrenamientos"
-        await doc.reference.delete();
+      // Llama al método de servicio para eliminar el entrenamiento
+      await entrenamientoService.eliminarEntrenamiento(entrenamientoId);
         // Puedes mostrar el SnackBar aquí si quieres que aparezca después de la eliminación exitosa
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Entrenamiento borrado correctamente')),
         );
-      }
+      
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -448,17 +441,17 @@ class Entrenamiento extends StatelessWidget {
                       //Forma para setear el id de forma automatica
                       //Genera un nuevo ID único para el entrenamiento que sera igual que el del documento
                       final nuevoId = Uuid().v4();
-                      await FirebaseFirestore.instance
-                          .collection('Entrenamientos')
-                          .doc(nuevoId)
-                          .set({
-                            'id': nuevoId,
-                            'nombre': nameController.text,
-                            'idUsuario': userCredential.user?.uid,
-                            'ejercicios': selectedEjercicioRefs,
-                            'jugadas': selectedJugadasRefs,
-                          });
-
+                      // Crea un nuevo entrenamiento
+                      entrenamientoService.agregarEntrenamiento(
+                        Entrenamientos(
+                          id: nuevoId,
+                          nombre: nameController.text,
+                          ejercicios: [],
+                          jugadas: [],
+                        ),
+                        selectedEjercicioRefs,
+                        selectedJugadasRefs,
+                      );
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -631,14 +624,16 @@ class Entrenamiento extends StatelessWidget {
                     }
                     try {
                       // Actualiza el entrenamiento en Firestore es la diferencia con el otro
-                      await FirebaseFirestore.instance
-                          .collection('Entrenamientos')
-                          .doc(entrenamiento.id)
-                          .update({
-                            'nombre': nameController.text,
-                            'ejercicios': ejercicioSeleccionados,
-                            'jugadas': jugadaSeleccionadas,
-                          });
+                      await entrenamientoService.editarEntrenamiento(
+                        Entrenamientos(
+                          id: entrenamiento.id,
+                          nombre: nameController.text,
+                          ejercicios: [],
+                          jugadas: [],
+                        ),
+                        ejercicioSeleccionados,
+                        jugadaSeleccionadas,
+                      );
 
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(

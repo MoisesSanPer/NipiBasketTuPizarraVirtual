@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -378,19 +377,16 @@ class _EjerciciosState extends State<Ejercicios> {
                         return;
                       }
                     }
-                
-                    // Guardar el ejercicio en Firestore
-                    await FirebaseFirestore.instance
-                        .collection('Ejercicio')
-                        .doc(nuevoId)
-                        .set({
-                          'id': nuevoId,
-                          'nombre': nombreController.text,
-                          'descripcion': descripcionController.text,
-                          'tipo': tipoSeleccionado.toString().split('.').last,
-                          'videoURL': url,
-                          'idUsuario': widget.userCredential.user?.uid,
-                        });
+                    final ejercicio = Ejercicio(
+                      id: nuevoId,
+                      nombre: nombreController.text,
+                      descripcion: descripcionController.text,
+                      tipo: tipoSeleccionado ?? TipoEjercicio.tiro,
+                      videoURL: url,
+                      idUsuario: widget.userCredential.user?.uid ?? '',
+                    );
+                    widget.ejerciciosServices.agrgarEjercicio(ejercicio);
+              
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
