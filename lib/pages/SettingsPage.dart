@@ -53,10 +53,8 @@ class _SettingsPageState extends State<SettingsPage> {
     //Pedir permiso para acceder a la galería
     var permission = await Permission.photos.request();
     // Si el permiso es restringido, solicitarlo de nuevo
-    if(permission.isRestricted)
-    {
-        permission= await Permission.photos.request();
-
+    if (permission.isRestricted) {
+      permission = await Permission.photos.request();
     }
 
     // Verificar si el permiso fue concedido
@@ -131,7 +129,10 @@ class _SettingsPageState extends State<SettingsPage> {
           'Ajustes',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.deepPurple[900],
+        backgroundColor:
+            Provider.of<ThemeProvider>(context).isDarkMode
+                ? Colors.black
+                : Colors.deepPurple[900],
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
@@ -160,10 +161,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           CircleAvatar(
                             radius: 50,
                             backgroundImage:
-                            // Si hay una imagen seleccionada, mostrarla
+                                // Si hay una imagen seleccionada, mostrarla
                                 _selectedImage != null
                                     ? FileImage(_selectedImage!)
-                                  // Si no hay una imagen seleccionada, mostrar la imagen de Firestore
+                                    // Si no hay una imagen seleccionada, mostrar la imagen de Firestore
                                     // Si no hay una imagen de Firestore, mostrar la imagen por defecto
                                     : (_currentPhotoUrl != null &&
                                             _currentPhotoUrl!.isNotEmpty

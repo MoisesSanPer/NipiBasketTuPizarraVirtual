@@ -76,7 +76,7 @@ class _HomeState extends State<Home> {
                             ),
                             SizedBox(height: 10),
                             const Text(
-                              "Aplicación para la gestión completa de equipos de baloncesto.",
+                              "Aplicación para la gestion de entrenamientos de baloncesto.",
                             ),
                             const SizedBox(height: 12),
                             const Text(

@@ -100,7 +100,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddEntrenamientoDialog,
-        child: Icon(Icons.add),
+              backgroundColor: Colors.deepPurple,
+        child: Icon(Icons.add, color: Colors.white),
+
       ),
     );
   }
