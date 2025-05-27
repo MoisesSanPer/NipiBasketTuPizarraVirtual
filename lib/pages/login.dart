@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         //Ajusta el tamaño de la pantalla para evitar el desbordamiento
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       "Don't have an account?",
                       style: TextStyle(
                         color: const Color.fromARGB(255, 184, 183, 183),
-                        fontSize: anchoPantalla*0.05,
+                        fontSize: anchoPantalla*0.04,
                       ),
                     ),
                     TextButton(
@@ -201,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: anchoPantalla*0.05,
+                          fontSize: anchoPantalla*0.04,
                         ),
                       ),
                     ),
