@@ -35,7 +35,7 @@ class AuthService {
         'email': email,
         'uuid': userCredential.user?.uid,
         'username': username,
-        'photoUrl': userCredential.user?.photoURL ?? '',
+        'photoURL': userCredential.user?.photoURL ?? '',
       });
       
       WidgetsBinding.instance.addPostFrameCallback((_) {   //Añadido mediante la IA  solo esta linea ya que me estaba dando errores

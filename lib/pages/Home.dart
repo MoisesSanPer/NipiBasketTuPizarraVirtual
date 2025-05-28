@@ -8,6 +8,7 @@ import 'package:nipibasket_tupizarravirtual/pages/Ejercicios.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Entrenamiento.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Jugadas.dart';
 import 'package:nipibasket_tupizarravirtual/pages/SettingsPage.dart';
+import 'package:nipibasket_tupizarravirtual/pages/pizarra.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
 import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
@@ -36,7 +37,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: _appbar,
         body: _body,
@@ -66,6 +67,8 @@ class _HomeState extends State<Home> {
         fontSize: 20, // Un poco más grande para mejor visibilidad
       ),
     ),
+    leading: null,
+    automaticallyImplyLeading: false,
     actions: [
       IconButton(
         icon: const Icon(Icons.help_outline, color: Colors.white),
@@ -251,14 +254,14 @@ class _HomeState extends State<Home> {
                 const Text(
                   "Soporte técnico",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     color: Color.fromARGB(255, 94, 93, 93),
                   ),
                 ),
                 Text(
                   "moisessanper5@gmail.com",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     color: Color.fromARGB(255, 25, 142, 238),
                   ),
                 ),
@@ -299,6 +302,7 @@ class _HomeState extends State<Home> {
       Tab(text: "Ejercicios", icon: Icon(Icons.sports_basketball)),
       Tab(text: "Entrenamiento", icon: Icon(Icons.fitness_center)),
       Tab(text: "Jugadas", icon: Icon(Icons.scoreboard)),
+      Tab(text: "Pizarra", icon: Icon(Icons.edit_road)),
     ],
   );
 
@@ -316,6 +320,9 @@ class _HomeState extends State<Home> {
       Jugadas(
         userCredential: widget.userCredential,
         jugadasServices: widget.jugadasServices,
+      ),
+      Pizarra(
+        userCredential: widget.userCredential,
       ),
     ],
   );

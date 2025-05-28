@@ -71,6 +71,7 @@ flutter:
   assets:
     - lib/assets/icon/icono.png
     - lib/assets/icon/canasta.png
+    - lib/assets/icon/cancha_baloncesto.png
     
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -17,13 +17,13 @@ class Usuarios {
     String? uuid,
     String? email,
     String? username,
-    String? photoUrl,
+    String? photoURL,
   }) {
     return Usuarios(
       uuid: uuid ?? this.uuid,
       email: email ?? this.email,
       username: username ?? this.username,
-      photoURL: photoUrl ?? this.photoURL,
+      photoURL: photoURL ?? this.photoURL,
     );
   }
 

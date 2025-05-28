@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: anchoPantalla * 0.10,
+              horizontal: anchoPantalla * 0.11,
               vertical: alturaPantalla * 0.15,
             ),
             child: Column(
