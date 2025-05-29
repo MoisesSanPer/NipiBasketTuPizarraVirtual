@@ -29,7 +29,7 @@ class _BootPageState extends State<BootPage> {
         jugadasServices = JugadasServices(widget.userCredential.user);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 1), () { 
-          Navigator.of(context).pushReplacement(
+          Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => Home(userCredential: widget.userCredential, entrenamientoService: entrenamientoService,ejerciciosServices: ejerciciosServices,jugadasServices: jugadasServices,)),
           );
         

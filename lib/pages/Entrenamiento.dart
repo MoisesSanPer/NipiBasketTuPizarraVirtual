@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/Entrenamientos.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
@@ -28,6 +29,8 @@ class Entrenamiento extends StatelessWidget {
           'Mis Entrenamientos',
           style: TextStyle(color: Colors.white),
         ),
+        leading: null,
+        automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 45, 102, 168),
       ),
@@ -197,7 +200,7 @@ class Entrenamiento extends StatelessWidget {
                                                 "Cerrar",
                                                 style: TextStyle(
                                                   color: Colors.blue,
-                                                ), 
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -297,11 +300,10 @@ class Entrenamiento extends StatelessWidget {
     try {
       // Llama al método de servicio para eliminar el entrenamiento
       await entrenamientoService.eliminarEntrenamiento(entrenamientoId);
-        // Puedes mostrar el SnackBar aquí si quieres que aparezca después de la eliminación exitosa
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Entrenamiento borrado correctamente')),
-        );
-      
+      // Puedes mostrar el SnackBar aquí si quieres que aparezca después de la eliminación exitosa
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Entrenamiento borrado correctamente')),
+      );
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -332,6 +334,8 @@ class Entrenamiento extends StatelessWidget {
                       decoration: const InputDecoration(
                         labelText: 'Nombre del entrenamiento',
                       ),
+                      maxLength: 15,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 20),
                     const Text('Selecciona ejercicios:'),
@@ -522,6 +526,8 @@ class Entrenamiento extends StatelessWidget {
                       decoration: const InputDecoration(
                         labelText: 'Nombre del entrenamiento',
                       ),
+                      maxLength: 15,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 20),
                     const Text('Selecciona ejercicios:'),

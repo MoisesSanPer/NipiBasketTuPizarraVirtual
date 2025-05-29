@@ -28,6 +28,8 @@ class _PizarraState extends State<Pizarra> {
           'Pizarra Táctica',
           style: TextStyle(color: Colors.white),
         ),
+        leading: null,
+        automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(255, 46, 127, 168),
         actions: [
           IconButton(
@@ -47,7 +49,7 @@ class _PizarraState extends State<Pizarra> {
             icon: const Icon(Icons.delete, color: Colors.white),
             onPressed: () {
               setState(() {
-                // Limpiar todos los trazos dibujados de la pizarra 
+                // Limpiar todos los trazos dibujados de la pizarra
                 drawingPoints.clear();
               });
             },
@@ -240,6 +242,7 @@ class DrawingPainter extends CustomPainter {
       }
     }
   }
+
   // Sobreescribe el método shouldRepaint para indicar que el painter debe ser repintado
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;

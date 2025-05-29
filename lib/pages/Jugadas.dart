@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart'
@@ -236,6 +237,8 @@ class _JugadasState extends State<Jugadas> {
                         ),
                       ),
                       style: const TextStyle(fontSize: 16),
+                       maxLength: 20,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -252,6 +255,8 @@ class _JugadasState extends State<Jugadas> {
                       ),
                       maxLines: 3,
                       style: const TextStyle(fontSize: 16),
+                       maxLength: 40,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 16),
                     Column(
