@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nipibasket_tupizarravirtual/Boot_page/boot_page.dart';
-import 'package:nipibasket_tupizarravirtual/extensions/extensions.dart';
 import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 
 class AuthService {
@@ -21,31 +20,24 @@ class AuthService {
     
     try {
 
-     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-      
+     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(    
       email: email,
-      password: password.sha256Hash,
+      password: password,
     );
       await userCredential.user?.updateDisplayName(username);
       if (userCredential.user == null || userCredential.user?.uid == null) {
       throw Exception('No se pudo obtener el UID del usuario recién creado');
   }
-
        await _firestore.collection('Users').doc(userCredential.user?.uid).set({
         'email': email,
         'uuid': userCredential.user?.uid,
         'username': username,
         'photoURL': userCredential.user?.photoURL ?? '',
-      });
-      
-      WidgetsBinding.instance.addPostFrameCallback((_) {   //Añadido mediante la IA  solo esta linea ya que me estaba dando errores
+      });     
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => BootPage(userCredential:userCredential,username:username))
-        );
-      });
-      
-    
+        );  
     } on FirebaseAuthException catch(e) {
       String message = _handleAuthError(e);
        Fluttertoast.showToast(
@@ -62,22 +54,18 @@ class AuthService {
   Future<void> signin({
     required String email,
     required String password,
-    required BuildContext context
+    required BuildContext context,
   }) async {
-    
     try {
-
        UserCredential userCredential =  await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
-        password: password.sha256Hash
-      );    
-      
+        password: password
+      );     
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => BootPage( userCredential:userCredential,username:userCredential.user?.displayName ?? ''))
         )
-      ;
-      
+      ;    
     } on FirebaseAuthException catch(e) {
       String message = _handleAuthError(e);
        Fluttertoast.showToast(
@@ -101,6 +89,13 @@ class AuthService {
           builder: (BuildContext context) =>LoginScreen()
         )
       );
+  }
+  Future<void> sendPasswordResetLink(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e.toString());
+    }
   }
   String _handleAuthError(FirebaseAuthException e) {
     switch (e.code) {

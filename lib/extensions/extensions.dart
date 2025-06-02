@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
-/// Extension de el string el cual me sirve para hashear la contraseña.
+/// Cifrado de contraseña el cual finalemnete no uso  debido a que firebase usa uno propio
 extension StringHashing on String {
   /// Calcula el  hash de la cadena usando el algoritmo especificado.
   /// Soporta 'md5', 'sha1' y 'sha256'.:
