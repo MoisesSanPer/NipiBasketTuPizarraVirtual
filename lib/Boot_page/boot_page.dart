@@ -8,9 +8,8 @@ import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
 import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
 //Pagina ayudada de una de ejemplo que teniamos en clase , modifico  añadiendo los campos que necesito
 class BootPage extends StatefulWidget {
-    final UserCredential userCredential;
     final String username;
-  const BootPage({super.key, required this.userCredential, required this.username});
+  const BootPage({super.key, required this.username});
 
   @override
   State<BootPage> createState() => _BootPageState();
@@ -24,13 +23,14 @@ class _BootPageState extends State<BootPage> {
    @override
   void initState() {
     super.initState();
-        entrenamientoService = EntrenamientoService(widget.userCredential.user);
-        ejerciciosServices = EjerciciosServices(widget.userCredential.user);
-        jugadasServices = JugadasServices(widget.userCredential.user);
+        entrenamientoService = EntrenamientoService(FirebaseAuth.instance.currentUser!);
+        ejerciciosServices = EjerciciosServices(FirebaseAuth.instance.currentUser!);
+        jugadasServices = JugadasServices(FirebaseAuth.instance.currentUser!);
+    //Para evitar el error de que el widget no se ha construido, usamos addPostFrameCallback, aconsejado por la IA
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 1), () { 
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Home(userCredential: widget.userCredential, entrenamientoService: entrenamientoService,ejerciciosServices: ejerciciosServices,jugadasServices: jugadasServices,)),
+            MaterialPageRoute(builder: (context) => Home(entrenamientoService: entrenamientoService,ejerciciosServices: ejerciciosServices,jugadasServices: jugadasServices)),
           );
         
       });

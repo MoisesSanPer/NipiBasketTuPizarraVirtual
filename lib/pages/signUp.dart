@@ -27,9 +27,9 @@ class _SignUpState extends State<SignUp> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        //Ajusta el tamaño de la pantalla para evitar el desbordamiento
         resizeToAvoidBottomInset: true,
         body: Container(
-          //Ajusta el tamaño de la pantalla para evitar el desbordamiento
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
@@ -152,38 +152,38 @@ class _SignUpState extends State<SignUp> {
                   Align(
                     alignment:
                         Alignment
-                            .centerRight, // Centrado vertical, alineado a la derecha
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
+                            .centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Already have an account? ',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 189, 187, 187),
+                              fontSize: anchoPantalla * 0.04,
                             ),
-                          );
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Already have an account? ',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 189, 187, 187),
-                                fontSize: anchoPantalla * 0.04,
-                              ),
+                          ),
+                          Text(
+                            'Sign in',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.95),
+                              fontSize: anchoPantalla * 0.045,
+                              fontWeight: FontWeight.w500,
                             ),
-                            Text(
-                              'Sign in',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.95),
-                                fontSize: anchoPantalla * 0.045,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ),                
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,

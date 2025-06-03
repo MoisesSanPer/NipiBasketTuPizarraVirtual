@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/services/auth_services.dart';
 
@@ -43,6 +45,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   );
                   return;
                 }
+                // Metodo enviar enlace de restablecimiento de contraseña
                 await _auth.sendPasswordResetLink(_email.text);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

@@ -22,8 +22,6 @@ void main() async {
 
 class AppRoot extends StatelessWidget {
   const AppRoot({super.key});
-  
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -33,7 +31,7 @@ class AppRoot extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      themeMode: themeProvider.themeMode,
+      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const LoginScreen(),
     );
     

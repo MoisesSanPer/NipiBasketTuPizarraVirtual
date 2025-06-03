@@ -16,12 +16,10 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class Ejercicios extends StatefulWidget {
-  final UserCredential userCredential;
   final EjerciciosServices ejerciciosServices;
 
   const Ejercicios({
     super.key,
-    required this.userCredential,
     required this.ejerciciosServices,
   });
 
@@ -214,7 +212,6 @@ class _EjerciciosState extends State<Ejercicios> {
                 await openAppSettings();
               }
             }
-
             return AlertDialog(
               title: const Text(
                 'Nuevo Ejercicio',
@@ -388,10 +385,9 @@ class _EjerciciosState extends State<Ejercicios> {
                       descripcion: descripcionController.text,
                       tipo: tipoSeleccionado ?? TipoEjercicio.tiro,
                       videoURL: url,
-                      idUsuario: widget.userCredential.user?.uid ?? '',
+                      idUsuario: FirebaseAuth.instance.currentUser?.uid ?? '',
                     );
                     widget.ejerciciosServices.agrgarEjercicio(ejercicio);
-              
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,

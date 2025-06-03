@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/DibujoPuntos.dart';
 
 class Pizarra extends StatefulWidget {
-  final UserCredential userCredential;
-  const Pizarra({super.key, required this.userCredential});
+  const Pizarra({super.key});
 
   @override
   State<Pizarra> createState() => _PizarraState();
@@ -71,7 +69,8 @@ class _PizarraState extends State<Pizarra> {
           // Área de dibujo
           GestureDetector(
             onHorizontalDragUpdate: (details) {
-              // Bloquea explícitamente los gestos horizontales pedido de IA ya que no sabia como hacer que se cambiara
+              // Bloquea explícitamente los gestos horizontales pedido de IA ya que no sabia como hacer que se cambiara debido 
+              //A mi implementacion de unTabBar que automaticamente detecta los gestos horizontales
               if (details.delta.dx.abs() > details.delta.dy.abs()) {
                 return;
               }
@@ -96,10 +95,10 @@ class _PizarraState extends State<Pizarra> {
               });
             },
             // Actualizar el trazo mientras se mueve el dedo por la pantalla
-            onPanUpdate: (details) {
+            onPanUpdate: (point) {
               setState(() {
                 // Añadir el punto actual al trazo en curso al array de puntos vas añadiendo los puntos mientras vas deslizando el dedo
-                drawingPoints.last.points.add(details.localPosition);
+                drawingPoints.last.points.add(point.localPosition);
               });
             },
             // Finalizar el trazo al levantar el dedo
@@ -110,13 +109,14 @@ class _PizarraState extends State<Pizarra> {
             },
             // Pintar los trazos en la pantalla
             child: CustomPaint(
-              // Usar el CustomPainter para dibujar los trazos
+              // Usar el CustomPainter para dibujar los trazos  en este caso se llama a la clase que hemos creado
+              // y hereda de CustomPainter
               painter: DrawingPainter(drawingPoints),
               // Tamaño infinito para ocupar todo el espacio disponible
               size: Size.infinite,
             ),
           ),
-          // Herramientas flotantes
+          // Herramientas flotantes para cambiar color y grosor del trazo
           Positioned(
             bottom: 10,
             left: 0,
@@ -220,9 +220,7 @@ class _PizarraState extends State<Pizarra> {
 class DrawingPainter extends CustomPainter {
   // Lista de puntos de dibujo que contiene los trazos y sus propiedades
   final List<DibujoPuntos> drawingPoints;
-
   DrawingPainter(this.drawingPoints);
-
   // Sobreescribe el método paint para dibujar los trazos en el canvas
   @override
   void paint(Canvas canvas, Size size) {

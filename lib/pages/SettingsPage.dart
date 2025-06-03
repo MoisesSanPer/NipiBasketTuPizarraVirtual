@@ -15,9 +15,8 @@ import 'package:provider/provider.dart';
 // ... (otros imports se mantienen igual)
 
 class SettingsPage extends StatefulWidget {
-  final UserCredential userCredential;
 
-  const SettingsPage({super.key, required this.userCredential});
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -41,7 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
       final userDoc =
           await FirebaseFirestore.instance
               .collection('Users')
-              .doc(widget.userCredential.user?.uid)
+              .doc(FirebaseAuth.instance.currentUser!.uid)
               .get();
 
       // Si el documento existe y tiene una URL de foto, la asigna a urlFotoActual
@@ -78,7 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() => imagenSeleccionada = File(image!.path));
       // Subir imagen a Firebase Storage a una carpeta específica
       final storageRef = FirebaseStorage.instance.ref(
-        'profile_pics/${widget.userCredential.user!.uid}.jpg',
+        'profile_pics/${FirebaseAuth.instance.currentUser!.uid}.jpg',
       );
 
       // Subir la imagen seleccionada al almacenamiento de Firebase
@@ -88,10 +87,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
       // Actualizar en Auth y Firestore para tener la foto de perfil actualizada
       await Future.wait([
-        widget.userCredential.user!.updatePhotoURL(downloadUrl),
+        FirebaseAuth.instance.currentUser!.updatePhotoURL(downloadUrl),
         FirebaseFirestore.instance
             .collection('Users')
-            .doc(widget.userCredential.user!.uid)
+            .doc(FirebaseAuth.instance.currentUser!.uid)
             .update({'photoURL': downloadUrl}),
       ]);
       // Actualizar el estado con la nueva URL de la foto
@@ -128,12 +127,29 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              //Esta es una ternaria que segun el color del tema cambia el degradado
+              colors:
+                  Provider.of<ThemeProvider>(context).isDarkMode
+                      ? [Colors.black]
+                      : [Colors.deepPurple[900]!, Colors.purple[800]!],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         title: const Text(
           'Ajustes',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: 24),
         ),
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -145,7 +161,7 @@ class _SettingsPageState extends State<SettingsPage> {
               builder: (context, snapshot) {
                 final userData = snapshot.data;
                 final email =
-                    widget.userCredential.user?.email ?? 'Correo no disponible';
+                    FirebaseAuth.instance.currentUser!.email ?? 'Correo no disponible';
                 return Card(
                   //Para que sobresalga un poco del fondo
                   elevation: 3,
@@ -157,7 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         Stack(
                           alignment: Alignment.bottomRight,
                           children: [
-                            // Avatar de pefil elc ual mostarra la foto de perfil o un icono por defecto
+                            // Avatar de pefil el cual mostrara la foto de perfil o un icono por defecto
                             mostrarFotoPefil(),
                             // Botón editar la foto de perfil
                             FloatingActionButton.small(
@@ -257,7 +273,7 @@ class _SettingsPageState extends State<SettingsPage> {
       final userDoc =
           await FirebaseFirestore.instance
               .collection('Users')
-              .doc(widget.userCredential.user?.uid)
+              .doc(FirebaseAuth.instance.currentUser!.uid)
               .get();
       // Si el documento existe, lo convierte a un objeto Usuarios sino devuelve null
       return userDoc.exists ? Usuarios.fromJson(userDoc.data()!) : null;

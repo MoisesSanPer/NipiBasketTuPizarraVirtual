@@ -88,7 +88,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   //Este metodo es el que se encarga de obtener los entrenamientos del dia seleccionado y este filtrada segun el dia mes y año que clickes
-  List<Event> _getEntrenamientosForDay(DateTime fecha) {
+  List<Event> getEntrenamientosForDay(DateTime fecha) {
     return listevents[DateTime(fecha.year, fecha.month, fecha.day)] ?? [];
   }
 
@@ -96,10 +96,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [_createCalendar(), Expanded(child: _buildEventList())],
+        children: [createCalendar(), Expanded(child: buildEventList())],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddEntrenamientoDialog,
+        onPressed: showAddEntrenamientoDialog,
               backgroundColor: Colors.deepPurple,
         child: Icon(Icons.add, color: Colors.white),
 
@@ -108,14 +108,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   // Este es el metodo que crea el calendario
-  Widget _createCalendar() {
+  Widget createCalendar() {
     return TableCalendar(
       firstDay: DateTime.utc(2018, 1, 1),
       lastDay: DateTime.utc(2032, 12, 31),
       //Esta propiedad es la que se refiere a que se reondee de otro color el dia que se ha selecciondo
       focusedDay: _focusedDay,
       calendarFormat: _calendarFormat,
-      eventLoader: _getEntrenamientosForDay,
+      eventLoader: getEntrenamientosForDay,
       selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
       //Evento que se ejecuta cuando se selecciona un dia lo haces que dia que este selecionado con el focus  sacado de la documentacion de flutter
       onDaySelected: (selectedDay, focusedDay) {
@@ -157,8 +157,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   /// Este metodo es el que se encarga de construir la lista de eventos
-  Widget _buildEventList() {
-    final events = _getEntrenamientosForDay(_selectedDay ?? _focusedDay);
+  Widget buildEventList() {
+    final events = getEntrenamientosForDay(_selectedDay ?? _focusedDay);
     if (events.isEmpty) {
       return Center(child: Text('No hay entrenamientos  para este día'));
     }
@@ -184,7 +184,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   //Evenento que se ejecuta cuando se pulsa el boton de añadir evento
   //Este metodo es el que se encarga de mostrar el dialogo para añadir un entrnamiento
   //En este caso se le pasa el entrenamiento que se ha seleccionado y se añade al calendario
-  Future<void> _showAddEntrenamientoDialog() async {
+  Future<void> showAddEntrenamientoDialog() async {
     // Obtener la lista de entrenamientos
     final entrenamientos =
         await entrenamientoService.obtenerEntrenamientosComoStream().first;
@@ -210,7 +210,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         'Ejercicios: ${entrenamiento.ejercicios.length}\n'
                         'Jugadas: ${entrenamiento.jugadas.length}',
                       ),
-
                       onTap: () {
                         // Al seleccionar un entrenamiento, lo añadimos al calendario
                         final newEvent = Event(

@@ -13,10 +13,9 @@ class EjerciciosServices {
         .where('idUsuario', whereIn: ['', user?.uid])
         .snapshots() // Obtiene un Stream<QuerySnapshot>
         .map((querySnapshot) {
-          // Convierte cada documento en un Map y luego en String (JSON)
+          // Convierte cada documento en un Map  siendo un string y un tipo dinamico  y luego en String (JSON)
           final listaDeDatos =
               querySnapshot.docs.map((doc) => doc.data()).map((data) {
-                // Convierte el Map a un objeto Ejercicio
                 return Ejercicio.fromJson(data);
               }).toList();
 

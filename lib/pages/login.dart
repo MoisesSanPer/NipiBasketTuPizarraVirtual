@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final alturaPantalla = MediaQuery.of(context).size.height;
     final anchoPantalla = MediaQuery.of(context).size.width;
     return GestureDetector(
+      //Ocultar el teclado cuando el usuario toca fuera de este
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         //Ajusta el tamaño de la pantalla para evitar el desbordamiento

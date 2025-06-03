@@ -13,11 +13,9 @@ import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
 import 'package:uuid/uuid.dart';
 
 class Entrenamiento extends StatelessWidget {
-  final UserCredential userCredential;
   final EntrenamientoService entrenamientoService;
   const Entrenamiento({
     super.key,
-    required this.userCredential,
     required this.entrenamientoService,
   });
 
@@ -313,8 +311,8 @@ class Entrenamiento extends StatelessWidget {
 
   Future<void> showAddDialog(BuildContext context) async {
     final nameController = TextEditingController();
-    final ejerciciosServices = EjerciciosServices(userCredential.user);
-    final jugadasServices = JugadasServices(userCredential.user);
+    final ejerciciosServices = EjerciciosServices(FirebaseAuth.instance.currentUser!);
+    final jugadasServices = JugadasServices(FirebaseAuth.instance.currentUser!);
     final selectedEjercicioRefs = <DocumentReference>[];
     final selectedJugadasRefs = <DocumentReference>[]; // Lista de referencias
 
@@ -488,8 +486,8 @@ class Entrenamiento extends StatelessWidget {
     Entrenamientos entrenamiento,
   ) async {
     final nameController = TextEditingController(text: entrenamiento.nombre);
-    final ejerciciosServices = EjerciciosServices(userCredential.user);
-    final jugadasServices = JugadasServices(userCredential.user);
+    final ejerciciosServices = EjerciciosServices(FirebaseAuth.instance.currentUser!);
+    final jugadasServices = JugadasServices(FirebaseAuth.instance.currentUser!);
     // Lista de referencias a ejercicios seleccionados
     // Inicializa la lista de referencias con los ejercicios actuales del entrenamiento
     // Recorre la lista de ejercicios y crea una referencia a cada uno

@@ -16,12 +16,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 class Jugadas extends StatefulWidget {
-  final UserCredential userCredential;
   final JugadasServices jugadasServices;
 
   const Jugadas({
     super.key,
-    required this.userCredential,
     required this.jugadasServices,
   });
 
@@ -358,6 +356,7 @@ class _JugadasState extends State<Jugadas> {
                       descripcion: descripcionController.text,
                       tipo: tipoSeleccionado ?? TipoJugada.ataque,
                       videoURL: url,
+                      idUsuario: FirebaseAuth.instance.currentUser?.uid ?? '',
                     );
                     // Llamar al servicio para agregar la jugada
                     await widget.jugadasServices.agregarJugada(nuevaJugada);

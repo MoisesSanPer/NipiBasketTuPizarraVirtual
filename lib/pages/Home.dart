@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Calendar.dart';
@@ -16,14 +15,12 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
-  final UserCredential userCredential;
   final EntrenamientoService entrenamientoService;
   final EjerciciosServices ejerciciosServices;
   final JugadasServices jugadasServices;
 
   const Home({
     super.key,
-    required this.userCredential,
     required this.entrenamientoService,
     required this.ejerciciosServices,
     required this.jugadasServices,
@@ -50,23 +47,25 @@ class _HomeState extends State<Home> {
     //El appbar tiene un color que cambia dependiendo del modo oscuro
     // El color del appbar es un degradado que cambia dependiendo del modo oscuro
     flexibleSpace: Container(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: Provider.of<ThemeProvider>(context).isDarkMode
-            ? [Colors.black]  
-            : [Colors.deepPurple[900]!, Colors.purple[800]!],  // Degradado para modo claro 
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          //Esta es una ternaria que segun el color del tema cambia el degradado
+          colors:
+              Provider.of<ThemeProvider>(context).isDarkMode
+                  ? [Colors.black]
+                  : [Colors.deepPurple[900]!, Colors.purple[800]!],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
     ),
-  ),
     title: const Text(
       "ÑipiBasket",
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 20, // Un poco más grande para mejor visibilidad
-      ),
+      style: TextStyle(color: Colors.white, fontSize: 20),
     ),
+    centerTitle: true,
+
+    //Propiedades estas dos que hay que tener activas para que no se muestre el icono de retroceso en la pagina de inicio
     leading: null,
     automaticallyImplyLeading: false,
     actions: [
@@ -85,7 +84,7 @@ class _HomeState extends State<Home> {
                 MaterialPageRoute(
                   builder:
                       (context) =>
-                          SettingsPage(userCredential: widget.userCredential),
+                          SettingsPage(),
                 ),
               ),
             },
@@ -131,9 +130,7 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 20),
-
                   // Contenido
                   SingleChildScrollView(
                     child: Column(
@@ -159,9 +156,9 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        funcionalidadesItem("•  Creación de entrenamiento"),
-                        funcionalidadesItem("•  Gestión de ejercicios"),
-                        funcionalidadesItem("•  Gestión de jugadas"),
+                        funcionalidadesItem(" •  Creación de entrenamiento"),
+                        funcionalidadesItem(" •  Gestión de ejercicios"),
+                        funcionalidadesItem(" •  Gestión de jugadas"),
                         const SizedBox(height: 24),
                         botonEnviarEmail(context),
                       ],
@@ -215,7 +212,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // Widget auxiliar para  lo item de funcionalidades
+  // Widget auxiliar para las funcionalidades
   funcionalidadesItem(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -229,7 +226,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // Widget para el botón de contacto
+  // Widget para el botón de contacto el cual enviara el correo electronico al pulsarlo
   botonEnviarEmail(BuildContext context) {
     return InkWell(
       onTap: () => _launchEmail(),
@@ -310,20 +307,15 @@ class _HomeState extends State<Home> {
     children: [
       CalendarScreen(),
       Ejercicios(
-        userCredential: widget.userCredential,
         ejerciciosServices: widget.ejerciciosServices,
       ),
       Entrenamiento(
-        userCredential: widget.userCredential,
         entrenamientoService: widget.entrenamientoService,
       ),
       Jugadas(
-        userCredential: widget.userCredential,
         jugadasServices: widget.jugadasServices,
       ),
-      Pizarra(
-        userCredential: widget.userCredential,
-      ),
+      Pizarra(),
     ],
   );
 }

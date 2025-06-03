@@ -103,8 +103,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
     }
   }
 
-  // Limpieza adecuada de recursos para que no haya fugas de memoria
-  //Ayudado por IA ya que me estaba dando problemas al cerrar el video
+  // Limpieza adecuada de recursos para que  se mas optimo el videoplayer
+  //Pedido  a la IA ya que no entendia el proque me tardaba tanto en cargar el video
   @override
   void dispose() {
     controladorVideo?.removeListener(videoListener);
