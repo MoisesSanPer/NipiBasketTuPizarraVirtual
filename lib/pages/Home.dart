@@ -81,11 +81,7 @@ class _HomeState extends State<Home> {
             () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder:
-                      (context) =>
-                          SettingsPage(),
-                ),
+                MaterialPageRoute(builder: (context) => SettingsPage()),
               ),
             },
       ),
@@ -294,6 +290,7 @@ class _HomeState extends State<Home> {
   }
 
   TabBar get _tabBar => TabBar(
+    labelStyle: TextStyle(fontSize: 12),
     tabs: [
       Tab(text: "Calendar", icon: Icon(Icons.calendar_month)),
       Tab(text: "Ejercicios", icon: Icon(Icons.sports_basketball)),
@@ -306,15 +303,9 @@ class _HomeState extends State<Home> {
   Widget get _body => TabBarView(
     children: [
       CalendarScreen(),
-      Ejercicios(
-        ejerciciosServices: widget.ejerciciosServices,
-      ),
-      Entrenamiento(
-        entrenamientoService: widget.entrenamientoService,
-      ),
-      Jugadas(
-        jugadasServices: widget.jugadasServices,
-      ),
+      Ejercicios(ejerciciosServices: widget.ejerciciosServices),
+      Entrenamiento(entrenamientoService: widget.entrenamientoService),
+      Jugadas(jugadasServices: widget.jugadasServices),
       Pizarra(),
     ],
   );
