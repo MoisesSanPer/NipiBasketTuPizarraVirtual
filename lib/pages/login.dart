@@ -199,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: anchoPantalla * 0.04,
                         ),
                       ),
-                      SizedBox(width: 4), 
+                      SizedBox(width: 6), 
                       TextButton(
                         onPressed: () {
                           Navigator.push(

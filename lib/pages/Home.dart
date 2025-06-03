@@ -140,7 +140,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Información de la aplicación lo hago en metodo auxiliar para que se mas limpio el codigo refactorizando
-                        tituloInfo("Versión", "Beta v-1.0.1"),
+                        tituloInfo("Versión", "Beta v-1.3.0"),
                         const SizedBox(height: 16),
                         const Text(
                           "Aplicación para la gestión de entrenamientos de baloncesto.",
