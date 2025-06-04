@@ -48,16 +48,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     if (eventsString != null) {
       final Map<String, dynamic> eventsMap = json.decode(eventsString);
+
+      //Asignas a el mapa que tien fechas y eventos el mapeo de la lista de eventos
+      //donde la clave es la fecha y el valor es una lista de eventos
+      //Y devuelves la lista de eventos
+
+      final Map<DateTime, List<Event>> nuevoMapa = eventsMap.map((key, value) {
+        final DateTime date = DateTime.parse(key);
+        final List<Event> events =
+            (value as List).map((e) => Event.fromJson(e)).toList();
+        return MapEntry(date, events);
+      });
       setState(() {
-        //Asignas a el mapa que tien fechas y eventos el mapeo de la lista de eventos
-        //donde la clave es la fecha y el valor es una lista de eventos
-        //Y devuelves la lista de eventos
-        listevents = eventsMap.map((key, value) {
-          final DateTime date = DateTime.parse(key);
-          final List<Event> events =
-              (value as List).map((e) => Event.fromJson(e)).toList();
-          return MapEntry(date, events);
-        });
+        listevents = nuevoMapa;
       });
     }
   }
@@ -100,9 +103,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: showAddEntrenamientoDialog,
-              backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.deepPurple,
         child: Icon(Icons.add, color: Colors.white),
-
       ),
     );
   }
@@ -252,19 +254,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   //Metodo que se encarga de eliminar el evento del calendario en el dia en este caso que tengas añadido
   void _deleteEvent(Event event) {
+    //Se obtiene el dia del evento y se elimina de la lista de eventos
+    final day = DateTime(event.date.year, event.date.month, event.date.day);
+    //Se elimina el evento de la lista de eventos filtrandiolo por el dia
+    //En este caso se elimina el evento que tenga el mismo titulo y la misma descripcion
+    listevents[day]?.removeWhere(
+      (e) => e.title == event.title && e.description == event.description,
+    );
+    if (listevents[day]?.isEmpty ?? false) {
+      listevents.remove(day);
+    }
     setState(() {
-      //Se obtiene el dia del evento y se elimina de la lista de eventos
-      final day = DateTime(event.date.year, event.date.month, event.date.day);
-      //Se elimina el evento de la lista de eventos filtrandiolo por el dia
-      //En este caso se elimina el evento que tenga el mismo titulo y la misma descripcion
-      listevents[day]?.removeWhere(
-        (e) => e.title == event.title && e.description == event.description,
-      );
-      guardarEvents();
-      if (listevents[day]?.isEmpty ?? false) {
-        listevents.remove(day);
-        guardarEvents();
-      }
+      listevents = Map.from(listevents);
     });
+    guardarEvents();
   }
 }
