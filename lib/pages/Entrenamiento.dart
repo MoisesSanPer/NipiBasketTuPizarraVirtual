@@ -469,7 +469,7 @@ class Entrenamiento extends StatelessWidget {
                     }
                   },
                   child: const Text(
-                    'Guardar',
+                    'Añadir',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -658,7 +658,7 @@ class Entrenamiento extends StatelessWidget {
                     }
                   },
                   child: const Text(
-                    'Guardar',
+                    'Editar',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
