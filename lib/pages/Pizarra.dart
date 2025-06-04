@@ -68,13 +68,13 @@ class _PizarraState extends State<Pizarra> {
           ),
           // Área de dibujo
           GestureDetector(
-            onHorizontalDragUpdate: (details) {
-              // Bloquea explícitamente los gestos horizontales pedido de IA ya que no sabia como hacer que se cambiara debido 
-              //A mi implementacion de unTabBar que automaticamente detecta los gestos horizontales
-              if (details.delta.dx.abs() > details.delta.dy.abs()) {
-                return;
-              }
-            },
+            // onHorizontalDragUpdate: (details) {
+            //   // Bloquea explícitamente los gestos horizontales pedido de IA ya que no sabia como hacer que se cambiara debido 
+            //   //A mi implementacion de unTabBar que automaticamente detecta los gestos horizontales
+            //   if (details.delta.dx.abs() > details.delta.dy.abs()) {
+            //     return;
+            //   }
+            // },
             //Inicias un nuevo trazo al tocar la pantalla funcion de GestureDetector
             onPanStart: (punto) {
               setState(() {

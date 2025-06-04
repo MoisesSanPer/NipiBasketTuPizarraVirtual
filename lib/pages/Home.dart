@@ -301,6 +301,7 @@ class _HomeState extends State<Home> {
   );
 
   Widget get _body => TabBarView(
+    physics: NeverScrollableScrollPhysics(),
     children: [
       CalendarScreen(),
       Ejercicios(ejerciciosServices: widget.ejerciciosServices),
