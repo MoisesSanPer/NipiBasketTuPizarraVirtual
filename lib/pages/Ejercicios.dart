@@ -18,10 +18,7 @@ import 'package:uuid/uuid.dart';
 class Ejercicios extends StatefulWidget {
   final EjerciciosServices ejerciciosServices;
 
-  const Ejercicios({
-    super.key,
-    required this.ejerciciosServices,
-  });
+  const Ejercicios({super.key, required this.ejerciciosServices});
 
   @override
   State<Ejercicios> createState() => _EjerciciosState();
@@ -193,9 +190,10 @@ class _EjerciciosState extends State<Ejercicios> {
             //Método para subir video desde la galería es sacado del cambiar imagne que tengo en Settings Page
             // y adaptado para subir videos
             Future<void> subirVideo() async {
-              var permission = await Permission.photos.request();
-              if (permission.isRestricted) {
-                permission = await Permission.photos.request();
+              var permission = await Permission.storage.request();
+              if (!permission.isGranted) {
+                await openAppSettings();
+                return;
               }
               if (permission.isGranted) {
                 final ImagePicker picker = ImagePicker();
@@ -208,10 +206,12 @@ class _EjerciciosState extends State<Ejercicios> {
                     selectedImage = File(video.path);
                   });
                 }
-              } else if (permission.isDenied) {
+              } else if (permission.isDenied ||
+                  permission.isPermanentlyDenied) {
                 await openAppSettings();
               }
             }
+
             return AlertDialog(
               title: const Text(
                 'Nuevo Ejercicio',
@@ -234,7 +234,7 @@ class _EjerciciosState extends State<Ejercicios> {
                         ),
                       ),
                       style: const TextStyle(fontSize: 16),
-                       maxLength: 20,
+                      maxLength: 20,
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 16),
@@ -252,7 +252,7 @@ class _EjerciciosState extends State<Ejercicios> {
                       ),
                       maxLines: 3,
                       style: const TextStyle(fontSize: 16),
-                       maxLength: 40,
+                      maxLength: 40,
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 16),
@@ -361,7 +361,7 @@ class _EjerciciosState extends State<Ejercicios> {
                     }
                     Navigator.pop(context);
                     String url = "";
-                   final nuevoId = Uuid().v4();
+                    final nuevoId = Uuid().v4();
                     if (selectedImage != null) {
                       try {
                         // Subir video a Firebase Storage formato .mp4

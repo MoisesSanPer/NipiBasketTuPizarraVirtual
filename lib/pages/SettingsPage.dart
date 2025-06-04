@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() => isUpdatingFoto = true);
     try {
       // Solicita permisos para acceder a la galería de fotos
-      final permission = await Permission.photos.request();
+      final permission = await Permission.storage.request();
       // Si el permiso no es concedido, abre la configuración de ajustes
       if (!permission.isGranted) {
         await openAppSettings();
@@ -110,7 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        ).showSnackBar(SnackBar(content: Text('Error:  no has seleccionado una imagen o no tienes permisos para acceder a la galería')));
       }
     } finally {
       // Independientemente de si la operación fue exitosa o no, actualiza el estado para indicar que ya no se está actualizando la foto

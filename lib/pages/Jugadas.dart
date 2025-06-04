@@ -193,9 +193,10 @@ class _JugadasState extends State<Jugadas> {
             //Método para subir video desde la galería es sacado del cambiar imagne que tengo en Settings Page
             // y adaptado para subir videos
             Future<void> subirVideo() async {
-              var permission = await Permission.photos.request();
-              if (permission.isRestricted) {
-                permission = await Permission.photos.request();
+              var permission = await Permission.storage.request();
+              if (!permission.isGranted) {
+                await openAppSettings();
+                return;
               }
               if (permission.isGranted) {
                 final ImagePicker picker = ImagePicker();
@@ -208,7 +209,7 @@ class _JugadasState extends State<Jugadas> {
                     selectedVideo = File(video.path);
                   });
                 }
-              } else if (permission.isDenied) {
+              } else if (permission.isDenied || permission.isPermanentlyDenied) {
                 await openAppSettings();
               }
             }
