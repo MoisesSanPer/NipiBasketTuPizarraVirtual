@@ -190,7 +190,7 @@ class _JugadasState extends State<Jugadas> {
             //Método para subir video desde la galería es sacado del cambiar imagne que tengo en Settings Page
             // y adaptado para subir videos
             Future<void> subirVideo() async {
-              var permission = await Permission.storage.request();
+              var permission = await Permission.photos.request();
               if (!permission.isGranted) {
                 await openAppSettings();
                 return;
