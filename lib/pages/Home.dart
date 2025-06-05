@@ -133,7 +133,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Información de la aplicación lo hago en metodo auxiliar para que se mas limpio el codigo refactorizando
-                        tituloInfo("Versión", "Beta v-1.3.0"),
+                        titleInfo("Versión", "Beta v-1.3.0"),
                         const SizedBox(height: 16),
                         const Text(
                           "Aplicación para la gestión de entrenamientos de baloncesto.",
@@ -152,11 +152,11 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        funcionalidadesItem(" •  Creación de entrenamiento"),
-                        funcionalidadesItem(" •  Gestión de ejercicios"),
-                        funcionalidadesItem(" •  Gestión de jugadas"),
+                        functionalitiesItem(" •  Creación de entrenamiento"),
+                        functionalitiesItem(" •  Gestión de ejercicios"),
+                        functionalitiesItem(" •  Gestión de jugadas"),
                         const SizedBox(height: 24),
-                        botonEnviarEmail(context),
+                        buttonSendEmail(context),
                       ],
                     ),
                   ),
@@ -187,7 +187,7 @@ class _HomeState extends State<Home> {
   }
 
   //Extraido  metodo auxiliar para construir los items de información
-  tituloInfo(String title, String value) {
+  titleInfo(String title, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -209,7 +209,7 @@ class _HomeState extends State<Home> {
   }
 
   // Widget auxiliar para las funcionalidades
-  funcionalidadesItem(String text) {
+  functionalitiesItem(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -223,9 +223,9 @@ class _HomeState extends State<Home> {
   }
 
   // Widget para el botón de contacto el cual enviara el correo electronico al pulsarlo
-  botonEnviarEmail(BuildContext context) {
+  buttonSendEmail(BuildContext context) {
     return InkWell(
-      onTap: () => _launchEmail(),
+      onTap: () => launchEmail(),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -268,7 +268,7 @@ class _HomeState extends State<Home> {
 
   /// Funcion que lanza el correo electronico el cual se lanza al pulsar el icono de ayuda
   /// Tiene un esquema  que es de envio y se enviara al correo electronico
-  void _launchEmail() async {
+  void launchEmail() async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
       //El email que se va a enviar

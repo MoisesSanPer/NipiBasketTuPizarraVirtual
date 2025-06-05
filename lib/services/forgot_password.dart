@@ -11,8 +11,8 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-  final _auth = AuthService();
-  final _email = TextEditingController();
+  final auth = AuthService();
+  final email = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,39 +24,39 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Enter email to send you a password reset email"),
+            Text("Introduzca su correo electrónico para enviarle un mensaje de restablecimiento de contraseña"),
             SizedBox(height: 20),
             TextField(
-              controller: _email,
+              controller: email,
               decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter email',
+                labelText: 'Correo electrónico',
+                hintText: 'Introducir correo electrónico',
                 border: OutlineInputBorder(),
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                if (_email.text.isEmpty || !_email.text.contains('@')) {
+                if (email.text.isEmpty || !email.text.contains('@')) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text("Please enter a valid email address"),
+                      content: Text("Introduzca una dirección de correo electrónico válida"),
                     ),
                   );
                   return;
                 }
                 // Metodo enviar enlace de restablecimiento de contraseña
-                await _auth.sendPasswordResetLink(_email.text);
+                await auth.sendPasswordResetLink(email.text);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      "An email for  password reset has been sent to your email",
+                      "Se ha enviado a su correo electrónico un mensaje para restablecer la contraseña",
                     ),
                   ),
                 );
                 Navigator.pop(context);
               },
-              child: Text("Send Email"),
+              child: Text("Enviar correo electrónico"),
             ),
           ],
         ),

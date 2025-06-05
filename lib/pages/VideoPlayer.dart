@@ -25,11 +25,11 @@ class VideoPlayer extends StatefulWidget {
 class _VideoPlayerState extends State<VideoPlayer> {
   //Incializamos el controlador de video y el controlador de chewie
   //Chewie es una librería que nos permite personalizar el reproductor de video
-  late VideoPlayerController? controladorVideo;
-  ChewieController? controladorChewie;
+  late VideoPlayerController? controllerVideo;
+  ChewieController? controllerChewie;
   // Variables para manejar el estado de inicialización y errores
-  bool iniciado = false;
-  bool hayError = false;
+  bool launched = false;
+  bool isError = false;
 
   //  Uso de mounted para evitar llamadas setState después de dispose
   @override
@@ -41,7 +41,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
       iniciadorDeVideo();
     } else {
       // Si no hay URL, mostramos un error
-      if (mounted) setState(() => hayError = true);
+      if (mounted) setState(() => isError = true);
     }
   }
 
@@ -49,20 +49,20 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Future<void> iniciadorDeVideo() async {
     // Inicializamos el controlador de video con la URL proporcionada
     // y añadimos un listener para manejar errores
-    controladorVideo = VideoPlayerController.networkUrl(
+    controllerVideo = VideoPlayerController.networkUrl(
       Uri.parse(widget.videoURL!),
     )..addListener(videoListener);
 
-    await controladorVideo!.initialize();
+    await controllerVideo!.initialize();
     if (!mounted) return;
 
-    controladorChewie = ChewieController(
-      videoPlayerController: controladorVideo!,
+    controllerChewie = ChewieController(
+      videoPlayerController: controllerVideo!,
       //Autoplay es falso por defecto y looping es false por defecto
       autoPlay: widget.autoPlay,
       looping: widget.looping,
       //Tamaño eprsonalizado por el controlador de video
-      aspectRatio: controladorVideo!.value.aspectRatio,
+      aspectRatio: controllerVideo!.value.aspectRatio,
       //Propiedad que nos muestra los controles del video
       showControlsOnInitialize: true,
       materialProgressColors: ChewieProgressColors(
@@ -92,14 +92,14 @@ class _VideoPlayerState extends State<VideoPlayer> {
       },
     );
     // Esperamos a que el controlador de Chewie se inicialice
-    if (mounted) setState(() => iniciado = true);
+    if (mounted) setState(() => launched = true);
   }
 
   //Listener para cambios en el video
   void videoListener() {
-    if (controladorVideo?.value.hasError ?? false) {
+    if (controllerVideo?.value.hasError ?? false) {
       //Si esta montado el componente actualizados el estado para mostrar un error
-      if (mounted) setState(() => hayError = true);
+      if (mounted) setState(() => isError = true);
     }
   }
 
@@ -107,10 +107,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
   //Pedido  a la IA ya que no entendia el proque me tardaba tanto en cargar el video
   @override
   void dispose() {
-    controladorVideo?.removeListener(videoListener);
-    controladorVideo?.pause();
-    controladorVideo?.dispose();
-    controladorChewie?.dispose();
+    controllerVideo?.removeListener(videoListener);
+    controllerVideo?.pause();
+    controllerVideo?.dispose();
+    controllerChewie?.dispose();
     super.dispose();
   }
 
@@ -130,17 +130,17 @@ class _VideoPlayerState extends State<VideoPlayer> {
   //  Método separado para construir el contenido según estado
   Widget videoContent() {
     // Si hay un error o la URL es nula o vacía, mostramos un widget de error
-    if (hayError || widget.videoURL == null || widget.videoURL!.isEmpty) {
+    if (isError || widget.videoURL == null || widget.videoURL!.isEmpty) {
       return videoContentError();
     }
     // Si el video no ha sido inicializado mediante la booleana del principio, mostramos un widget de carga
-    if (!iniciado) {
+    if (!launched) {
       return videoContentCargando();
     }
 
     // Si el controlador de Chewie está inicializado y el video está listo para reproducirse, mostramos el video
-    if (controladorChewie != null &&
-        controladorChewie!.videoPlayerController.value.isInitialized) {
+    if (controllerChewie != null &&
+        controllerChewie!.videoPlayerController.value.isInitialized) {
       // Usamos ClipRRect para redondear las esquinas del video
       return ClipRRect(
         borderRadius: BorderRadius.circular(8),
@@ -150,9 +150,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
           child: FittedBox(
             fit: BoxFit.contain, // Cubre todo el espacio disponible
             child: SizedBox(
-              width: controladorVideo!.value.aspectRatio * widget.height,
+              width: controllerVideo!.value.aspectRatio * widget.height,
               height: widget.height,
-              child: Chewie(controller: controladorChewie!),
+              child: Chewie(controller: controllerChewie!),
             ),
           ),
         ),

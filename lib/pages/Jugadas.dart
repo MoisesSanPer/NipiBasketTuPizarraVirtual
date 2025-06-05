@@ -1,15 +1,12 @@
 // ignore_for_file: use_build_context_synchronously, unnecessary_brace_in_string_interps
-
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
-import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart'
-    show ThemeProvider;
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart'show ThemeProvider;
 import 'package:nipibasket_tupizarravirtual/pages/VideoPlayer.dart';
 import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -179,8 +176,8 @@ class _JugadasState extends State<Jugadas> {
   
   // Método para mostrar el diálogo de agregar ejercicio
   void agregarJugada(BuildContext context) {
-    final TextEditingController nombreController = TextEditingController();
-    final TextEditingController descripcionController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
     TipoJugada? tipoSeleccionado = TipoJugada.ataque; // Tipo de jugada por defecto
     File? selectedVideo;
     showDialog(
@@ -224,7 +221,7 @@ class _JugadasState extends State<Jugadas> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      controller: nombreController,
+                      controller: nameController,
                       decoration: InputDecoration(
                         labelText: 'Nombre',
                         border: OutlineInputBorder(
@@ -241,7 +238,7 @@ class _JugadasState extends State<Jugadas> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
-                      controller: descripcionController,
+                      controller: descriptionController,
                       decoration: InputDecoration(
                         labelText: 'Descripción',
                         border: OutlineInputBorder(
@@ -325,7 +322,7 @@ class _JugadasState extends State<Jugadas> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    if (nombreController.text.isEmpty) {
+                    if (nameController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('El nombre es requerido')),
                       );
@@ -338,7 +335,7 @@ class _JugadasState extends State<Jugadas> {
                       try {
                         // Subir video a Firebase Storage formato .mp4
                         final storageRef = FirebaseStorage.instance.ref().child(
-                          '${nuevoId}${nombreController.text}.mp4',
+                          '${nuevoId}${nameController.text}.mp4',
                         );
                         // Subir el archivo seleccionado a Firebase Storage
                         await storageRef.putFile(selectedVideo!);
@@ -353,8 +350,8 @@ class _JugadasState extends State<Jugadas> {
                     }
                    final nuevaJugada = Jugada(
                       id: nuevoId,
-                      nombre: nombreController.text,
-                      descripcion: descripcionController.text,
+                      nombre: nameController.text,
+                      descripcion: descriptionController.text,
                       tipo: tipoSeleccionado ?? TipoJugada.ataque,
                       videoURL: url,
                       idUsuario: FirebaseAuth.instance.currentUser?.uid ?? '',

@@ -176,8 +176,8 @@ class _EjerciciosState extends State<Ejercicios> {
 
   // Método para mostrar el diálogo de agregar ejercicio
   void agregarEjercicio(BuildContext context) {
-    final TextEditingController nombreController = TextEditingController();
-    final TextEditingController descripcionController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
     TipoEjercicio? tipoSeleccionado = TipoEjercicio.tiro;
     File? selectedImage;
     showDialog(
@@ -222,7 +222,7 @@ class _EjerciciosState extends State<Ejercicios> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      controller: nombreController,
+                      controller: nameController,
                       decoration: InputDecoration(
                         labelText: 'Nombre',
                         border: OutlineInputBorder(
@@ -239,7 +239,7 @@ class _EjerciciosState extends State<Ejercicios> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
-                      controller: descripcionController,
+                      controller: descriptionController,
                       decoration: InputDecoration(
                         labelText: 'Descripción',
                         border: OutlineInputBorder(
@@ -353,7 +353,7 @@ class _EjerciciosState extends State<Ejercicios> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    if (nombreController.text.isEmpty) {
+                    if (nameController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('El nombre es requerido')),
                       );
@@ -366,7 +366,7 @@ class _EjerciciosState extends State<Ejercicios> {
                       try {
                         // Subir video a Firebase Storage formato .mp4
                         final storageRef = FirebaseStorage.instance.ref().child(
-                          '${nuevoId}${nombreController.text}.mp4',
+                          '${nuevoId}${nameController.text}.mp4',
                         );
                         // Subir el archivo seleccionado a Firebase Storage
                         await storageRef.putFile(selectedImage!);
@@ -381,8 +381,8 @@ class _EjerciciosState extends State<Ejercicios> {
                     }
                     final ejercicio = Ejercicio(
                       id: nuevoId,
-                      nombre: nombreController.text,
-                      descripcion: descripcionController.text,
+                      nombre: nameController.text,
+                      descripcion: descriptionController.text,
                       tipo: tipoSeleccionado ?? TipoEjercicio.tiro,
                       videoURL: url,
                       idUsuario: FirebaseAuth.instance.currentUser?.uid ?? '',

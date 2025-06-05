@@ -15,14 +15,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final bool _isLoading = false;
-  bool _obscurePassword = true;
+  final bool isLoading = false;
+  bool obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     //Ajusta el tamaño de la pantalla para evitar el desbordamiento ya que me daba problemas con  overflow de pixeles
-    final alturaPantalla = MediaQuery.of(context).size.height;
-    final anchoPantalla = MediaQuery.of(context).size.width;
+    final heightScreen = MediaQuery.of(context).size.height;
+    final widthScreen = MediaQuery.of(context).size.width;
     return GestureDetector(
       //Ocultar el teclado cuando el usuario toca fuera de este
       onTap: () => FocusScope.of(context).unfocus(),
@@ -40,23 +40,23 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: anchoPantalla * 0.11,
-                vertical: alturaPantalla * 0.15,
+                horizontal: widthScreen * 0.11,
+                vertical: heightScreen * 0.15,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 10),
                   Text(
-                    'Welcome',
+                    'Bienvenido',
                     style: TextStyle(
-                      fontSize: 42,
+                      fontSize: heightScreen * 0.048,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    'Sign in to continue',
+                    'Iniciar sesión para continuar',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white.withOpacity(0.9),
@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText: 'Email Address',
+                      labelText: 'Correo electrónico',
                       prefixIcon: Icon(Icons.email, color: Colors.indigo),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -104,22 +104,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _passwordController,
-                    obscureText: _obscurePassword,
+                    obscureText: obscurePassword,
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText: 'Password',
+                      labelText: 'Contraseña',
                       prefixIcon: Icon(Icons.lock, color: Colors.indigo),
                       suffixIcon: IconButton(
                         //Ternaria para ir comprobando el icono de la contraseña que depende de si se ve o no
                         icon: Icon(
-                          _obscurePassword
+                          obscurePassword
                               ? Icons.visibility
                               : Icons.visibility_off,
                           color: Colors.grey,
                         ),
                         onPressed: () {
                           setState(() {
-                            _obscurePassword = !_obscurePassword;
+                            obscurePassword = !obscurePassword;
                           });
                         },
                       ),
@@ -144,10 +144,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       child: Text(
-                        'Forgot Password?',
+                        '¿Ha olvidado su contraseña?',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,),
                       ),
                     ),
@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed:
-                          _isLoading
+                          isLoading
                               ? null
                               : () {
                                 AuthService().signin(
@@ -175,10 +175,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         elevation: 3,
                       ),
                       child:
-                          _isLoading
+                          isLoading
                               ? CircularProgressIndicator(color: Colors.white)
                               : Text(
-                                'SIGN IN',
+                                'INICIAR SESIÓN',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Would you prefer something faster?',
+                    '¿Prefieres algo más rápido?',
                     style: TextStyle(
                       fontSize: 16,
                       color: Color.fromARGB(255, 255, 255, 255),
@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 24,
                     ),
                     label: Text(
-                      'Sign in with Google',
+                      'Iniciar sesión con Google',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -232,10 +232,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account?",
+                        "¿No tiene cuenta?",
                         style: TextStyle(
                           color: Color.fromARGB(255, 184, 183, 183),
-                          fontSize: anchoPantalla * 0.04,
+                          fontSize: widthScreen * 0.04,
                         ),
                       ),
                       SizedBox(width: 6),
@@ -250,10 +250,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           foregroundColor: Colors.white,
                           textStyle: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: anchoPantalla * 0.04,
+                            fontSize: widthScreen * 0.04,
                           ),
                         ),
-                        child: Text('Sign Up'),
+                        child: Text('Regístrate'),
                       ),
                     ],
                   ),

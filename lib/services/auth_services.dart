@@ -9,8 +9,8 @@ import 'package:nipibasket_tupizarravirtual/Boot_page/boot_page.dart';
 import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> signup({
     required String email,
@@ -19,14 +19,14 @@ class AuthService {
     required String username,
   }) async {
     try {
-      UserCredential userCredential = await _auth
+      UserCredential userCredential = await auth
           .createUserWithEmailAndPassword(email: email, password: password);
       await userCredential.user?.updateDisplayName(username);
       //Verifica si el usuario se creó correctamente
       if (userCredential.user == null || userCredential.user?.uid == null) {
         throw Exception('No se pudo obtener el UID del usuario recién creado');
       }
-      await _firestore.collection('Users').doc(userCredential.user?.uid).set({
+      await firestore.collection('Users').doc(userCredential.user?.uid).set({
         'email': email,
         'uuid': userCredential.user?.uid,
         'username': username,
@@ -164,7 +164,7 @@ class AuthService {
 
   Future<void> sendPasswordResetLink(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      await auth.sendPasswordResetEmail(email: email);
     } catch (e) {
       print(e.toString());
     }
@@ -173,23 +173,23 @@ class AuthService {
   String _handleAuthError(FirebaseAuthException e) {
     switch (e.code) {
       case 'weak-password':
-        return 'The password provided is too weak.';
+        return 'La contraseña proporcionada es demasiado débil.';
       case 'email-already-in-use':
-        return 'An account already exists with that email.';
+        return 'Ya existe una cuenta con ese correo electrónico.';
       case 'invalid-email':
-        return 'The email address is invalid.';
+        return 'La dirección de correo electrónico no es válida.';
       case 'user-not-found':
-        return 'No user found with this email.';
+        return 'No se ha encontrado ningún usuario con este correo electrónico.';
       case 'wrong-password':
-        return 'Incorrect password.';
+        return 'Contraseña incorrecta.';
       case 'user-disabled':
-        return 'This account has been disabled.';
+        return 'Esta cuenta ha sido desactivada.';
       case 'too-many-requests':
-        return 'Too many attempts. Try again later.';
+        return 'Demasiados intentos. Vuelva a intentarlo más tarde.';
       case 'operation-not-allowed':
-        return 'Email/password accounts are not enabled.';
+        return 'Las cuentas de correo electrónico/contraseña no están habilitadas.';
       default:
-        return 'Authentication failed. Please try again.';
+        return 'Autenticación fallida. Por favor, inténtelo de nuevo.';
     }
   }
 }

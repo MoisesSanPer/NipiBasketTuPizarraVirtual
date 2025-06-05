@@ -21,7 +21,8 @@ class _SignUpState extends State<SignUp> {
   final RegExp passwordRegExp = RegExp(
     r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$',
   );
-
+  bool isLoading = false;
+  bool obscurePassword = true;
   //Metodo para mostrar los Toast
   void showToast(String message) {
     Fluttertoast.showToast(
@@ -34,14 +35,12 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  bool _isLoading = false;
-  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     //Ajusta el tamaño de la pantalla para evitar el desbordamiento ya que me daba problemas con  overflow de pixeles
-    final alturaPantalla = MediaQuery.of(context).size.height;
-    final anchoPantalla = MediaQuery.of(context).size.width;
+    final heightScreen = MediaQuery.of(context).size.height;
+    final widthScreen = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -60,22 +59,22 @@ class _SignUpState extends State<SignUp> {
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: anchoPantalla * 0.10,
-                vertical: alturaPantalla * 0.15,
+                horizontal: widthScreen * 0.10,
+                vertical: heightScreen * 0.15,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Create Account',
+                    'Crear cuenta',
                     style: TextStyle(
-                      fontSize: alturaPantalla * 0.035,
+                      fontSize: heightScreen * 0.048,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    'Sign up to register',
+                    'Regístrate, por favor',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white.withOpacity(0.9),
@@ -109,7 +108,7 @@ class _SignUpState extends State<SignUp> {
                     controller: _usernameController,
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText: 'Username',
+                      labelText: 'Usuario',
                       prefixIcon: Icon(Icons.person, color: Colors.indigo),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -126,7 +125,7 @@ class _SignUpState extends State<SignUp> {
                     decoration: InputDecoration(
                       //Para que cuando suba el texto no se vea el label y no se bugue
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText: 'Email Address',
+                      labelText: 'Correo electrónico',
                       prefixIcon: Icon(Icons.email, color: Colors.indigo),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -139,22 +138,22 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _passwordController,
-                    obscureText: _obscurePassword,
+                    obscureText: obscurePassword,
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText: 'Password',
+                      labelText: 'Contraseña',
                       prefixIcon: Icon(Icons.lock, color: Colors.indigo),
                       suffixIcon: IconButton(
                         //Ternaria para ir comprobando el icono de la contraseña que depende de si se ve o no
                         icon: Icon(
-                          _obscurePassword
+                          obscurePassword
                               ? Icons.visibility
                               : Icons.visibility_off,
                           color: Colors.grey,
                         ),
                         onPressed: () {
                           setState(() {
-                            _obscurePassword = !_obscurePassword;
+                            obscurePassword = !obscurePassword;
                           });
                         },
                       ),
@@ -182,17 +181,17 @@ class _SignUpState extends State<SignUp> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Already have an account? ',
+                            '¿Ya tiene una cuenta?',
                             style: TextStyle(
                               color: Color.fromARGB(255, 189, 187, 187),
-                              fontSize: anchoPantalla * 0.04,
+                              fontSize: widthScreen * 0.04,
                             ),
                           ),
                           Text(
-                            'Sign in',
+                            'Iniciar sesión',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.95),
-                              fontSize: anchoPantalla * 0.045,
+                              fontSize: widthScreen * 0.045,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -207,7 +206,7 @@ class _SignUpState extends State<SignUp> {
                     height: 40,
                     child: ElevatedButton(
                       onPressed:
-                          _isLoading
+                          isLoading
                               ? null
                               : () async {
                                 // Validación de los campos mismo formato que en el login
@@ -231,7 +230,7 @@ class _SignUpState extends State<SignUp> {
                                   );
                                   return;
                                 }
-                                setState(() => _isLoading = true);
+                                setState(() => isLoading = true);
                                 await AuthService().signup(
                                   username: username,
                                   email: email,
@@ -239,7 +238,7 @@ class _SignUpState extends State<SignUp> {
                                   context: context,
                                 );
 
-                                setState(() => _isLoading = false);
+                                setState(() => isLoading = false);
                               },
                         style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -249,10 +248,10 @@ class _SignUpState extends State<SignUp> {
                         elevation: 3,
                       ),
                       child:
-                          _isLoading
+                          isLoading
                               ? CircularProgressIndicator(color: Colors.white)
                               : Text(
-                                'SIGN UP',
+                                'REGÍSTRATE',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

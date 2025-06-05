@@ -23,8 +23,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  File? imagenSeleccionada;
-  String? urlFotoActual;
+  File? imageSelected;
+  String? urlCurrentPhoto;
   bool isUpdatingFoto = false;
 
   @override
@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
       // Si el documento existe y tiene una URL de foto, la asigna a urlFotoActual
       if (userDoc.exists) {
         //Actualiza el estado con la URL de la foto la cual sacas del documento de Firestore
-        setState(() => urlFotoActual = userDoc.data()!['photoURL']);
+        setState(() => urlCurrentPhoto = userDoc.data()!['photoURL']);
       }
     } catch (e) {
       // Si ocurre un error al cargar la foto, muestra un mensaje
@@ -74,14 +74,14 @@ class _SettingsPageState extends State<SettingsPage> {
       // Abre la galería para seleccionar una imagen
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       // Actualiza el estado con la imagen seleccionada la cual es sacada de la galería
-      setState(() => imagenSeleccionada = File(image!.path));
+      setState(() => imageSelected = File(image!.path));
       // Subir imagen a Firebase Storage a una carpeta específica
       final storageRef = FirebaseStorage.instance.ref(
         'profile_pics/${FirebaseAuth.instance.currentUser!.uid}.jpg',
       );
 
       // Subir la imagen seleccionada al almacenamiento de Firebase
-      await storageRef.putFile(imagenSeleccionada!);
+      await storageRef.putFile(imageSelected!);
       // Obtener la URL de descarga de la imagen subida con esta URL se actualizará la foto de perfil
       final downloadUrl = await storageRef.getDownloadURL();
 
@@ -95,7 +95,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ]);
       // Actualizar el estado con la nueva URL de la foto
       // Esto actualizará la foto de perfil en la aplicación
-      setState(() => urlFotoActual = downloadUrl);
+      setState(() => urlCurrentPhoto = downloadUrl);
       // Mostrar un mensaje de éxito si  esta montado la foto esto es importante para evitar errores si el widget ya no está en el árbol
       // de widgets
       if (mounted) {
@@ -198,9 +198,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 );
               },
             ),
-
             const SizedBox(height: 32),
-
             // Botón cambiar tema
             ElevatedButton.icon(
               // Icono que cambia según el tema actual
@@ -248,8 +246,8 @@ class _SettingsPageState extends State<SettingsPage> {
       backgroundImage: getImagenPefil(),
       // Si no hay imagen seleccionada ni URL de foto , nos muestra un icono de contacto  para que qude mas bonito
       child:
-          (imagenSeleccionada == null &&
-                  (urlFotoActual == null || urlFotoActual!.isEmpty))
+          (imageSelected == null &&
+                  (urlCurrentPhoto == null || urlCurrentPhoto!.isEmpty))
               ? const Icon(Icons.person, size: 50, color: Colors.grey)
               : null,
     );
@@ -258,10 +256,10 @@ class _SettingsPageState extends State<SettingsPage> {
   // Método para obtener la imagen de perfil
   ImageProvider? getImagenPefil() {
     // Si hay una imagen seleccionada, devuelve esa imagen
-    if (imagenSeleccionada != null) return FileImage(imagenSeleccionada!);
+    if (imageSelected != null) return FileImage(imageSelected!);
     // Si hay una URL de foto actual, devuelve esa imagen de red
-    if (urlFotoActual != null && urlFotoActual!.isNotEmpty) {
-      return NetworkImage(urlFotoActual!);
+    if (urlCurrentPhoto != null && urlCurrentPhoto!.isNotEmpty) {
+      return NetworkImage(urlCurrentPhoto!);
     }
     return null;
   }
