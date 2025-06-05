@@ -145,11 +145,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -182,6 +185,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Colors.indigo,
                                 ),
                               ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Would you prefer something faster?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
                   const SizedBox(height: 20),

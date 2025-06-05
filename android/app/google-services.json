@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "266143210976-cjev4omdgt4fl7l3qg2k3tju0bpsf3co.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nipibasket_tupizarravirtual",
+            "certificate_hash": "fa64027bc16e42d4b4fa854b7c7926871520c4b4"
+          }
+        },
+        {
           "client_id": "266143210976-8lkd2qjdlooatunsd21jlorf9lh6o4ma.apps.googleusercontent.com",
           "client_type": 3
         }

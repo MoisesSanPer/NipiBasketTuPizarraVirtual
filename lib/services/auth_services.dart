@@ -42,8 +42,8 @@ class AuthService {
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.black,
         fontSize: 14.0,
       );
     }
@@ -71,8 +71,8 @@ class AuthService {
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.black,
         fontSize: 14.0,
       );
     }
@@ -80,6 +80,11 @@ class AuthService {
 
   Future<void> signInWithGoogle({required BuildContext context}) async {
     try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      // Cierra sesión previa para permitir elegir otra cuenta
+      await googleSignIn.signOut();
+
       // Inicia el flujo de autenticación
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
@@ -108,12 +113,15 @@ class AuthService {
             .collection('Users')
             .doc(user.uid);
         await userDoc.set({
-          'uid': user.uid,
+          'uuid': user.uid,
           'username': user.displayName,
           'email': user.email,
           'photoURL': user.photoURL,
         }, SetOptions(merge: true));
-        Fluttertoast.showToast(msg: "Inicio de sesión exitoso.");
+        Fluttertoast.showToast(
+          msg: "Inicio de sesión exitoso.",
+          backgroundColor: Colors.green,
+        );
       }
       Navigator.pushReplacement(
         context,
@@ -129,8 +137,8 @@ class AuthService {
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.black,
         fontSize: 14.0,
       );
     } catch (e) {
@@ -139,7 +147,7 @@ class AuthService {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
+        textColor: Colors.black,
         fontSize: 14.0,
       );
     }

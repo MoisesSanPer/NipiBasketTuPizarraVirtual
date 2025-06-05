@@ -133,7 +133,7 @@ class _SettingsPageState extends State<SettingsPage> {
               //Esta es una ternaria que segun el color del tema cambia el degradado
               colors:
                   Provider.of<ThemeProvider>(context).isDarkMode
-                      ? [Colors.black]
+                      ? [Colors.black, Colors.grey[900]!]
                       : [Colors.deepPurple[900]!, Colors.purple[800]!],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
