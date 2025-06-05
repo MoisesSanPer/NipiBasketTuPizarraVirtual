@@ -30,11 +30,11 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    cargarFotoPerfil();
+    uploadPhotoProfile();
   }
 
   // Cargar foto de perfil al iniciar la aplicación
-  Future<void> cargarFotoPerfil() async {
+  Future<void> uploadPhotoProfile() async {
     try {
       //Llama a Firestore para obtener la URL de la foto de perfil
       final userDoc =
@@ -60,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   // Método para cambiar la foto de perfil
   // Este método solicita permisos, permite seleccionar una imagen y la sube a Firebase Storage
-  Future<void> cambiarFotoPerfil() async {
+  Future<void> changePhotoProfile() async {
     // Verifica si ya se está actualizando la foto para evitar múltiples solicitudes
     setState(() => isUpdatingFoto = true);
     try {
@@ -174,10 +174,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           alignment: Alignment.bottomRight,
                           children: [
                             // Avatar de pefil el cual mostrara la foto de perfil o un icono por defecto
-                            mostrarFotoPefil(),
+                            showPhotoPefil(),
                             // Botón editar la foto de perfil
                             FloatingActionButton.small(
-                              onPressed: () => cambiarFotoPerfil(),
+                              onPressed: () => changePhotoProfile(),
                               child: const Icon(Icons.edit),
                             ),
                           ],
@@ -221,7 +221,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 minimumSize: const Size(double.infinity, 50),
                 side: BorderSide(color: Colors.red.withOpacity(0.4)),
               ),
-              onPressed: () => cerrarSesionDialogo(context),
+              onPressed: () => closeSessionDialogue(context),
               child: const Text(
                 'Cerrar sesión',
                 style: TextStyle(color: Colors.red),
@@ -234,7 +234,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   // Método para mostrar el avatar de perfil
-  Widget mostrarFotoPefil() {
+  Widget showPhotoPefil() {
     // Si se está actualizando la foto, muestra un avatar con un indicador de carga para que parezca realista
     if (isUpdatingFoto) {
       return const CircleAvatar(radius: 60, child: CircularProgressIndicator());
@@ -243,7 +243,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return CircleAvatar(
       radius: 60,
       backgroundColor: Colors.grey[200],
-      backgroundImage: getImagenPefil(),
+      backgroundImage: getImageProfile(),
       // Si no hay imagen seleccionada ni URL de foto , nos muestra un icono de contacto  para que qude mas bonito
       child:
           (imageSelected == null &&
@@ -254,7 +254,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   // Método para obtener la imagen de perfil
-  ImageProvider? getImagenPefil() {
+  ImageProvider? getImageProfile() {
     // Si hay una imagen seleccionada, devuelve esa imagen
     if (imageSelected != null) return FileImage(imageSelected!);
     // Si hay una URL de foto actual, devuelve esa imagen de red
@@ -282,7 +282,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   // Método para mostrar un diálogo de confirmación al cerrar sesión
-  void cerrarSesionDialogo(BuildContext context) {
+  void closeSessionDialogue(BuildContext context) {
     showDialog(
       context: context,
       builder:
