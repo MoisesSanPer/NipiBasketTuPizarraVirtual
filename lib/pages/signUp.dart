@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 import 'package:nipibasket_tupizarravirtual/services/auth_services.dart';
 
@@ -15,8 +16,25 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_]{4,20}$');
+  final RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  final RegExp passwordRegExp = RegExp(
+    r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$',
+  );
 
-  final bool _isLoading = false;
+  //Metodo para mostrar los Toast
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black87,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
+  }
+
+  bool _isLoading = false;
   bool _obscurePassword = true;
 
   @override
@@ -150,9 +168,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   const SizedBox(height: 15),
                   Align(
-                    alignment:
-                        Alignment
-                            .centerRight,
+                    alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
                         Navigator.pushReplacement(
@@ -185,6 +201,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   const SizedBox(height: 10),
+
                   SizedBox(
                     width: double.infinity,
                     height: 40,
@@ -192,18 +209,42 @@ class _SignUpState extends State<SignUp> {
                       onPressed:
                           _isLoading
                               ? null
-                              : () {
-                                AuthService().signup(
-                                  username: _usernameController.text,
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
+                              : () async {
+                                // Validación de los campos mismo formato que en el login
+                                final username =
+                                    _usernameController.text.trim();
+                                final email = _emailController.text.trim();
+                                final password = _passwordController.text;
+                                if (!usernameRegExp.hasMatch(username)) {
+                                  showToast(
+                                    'Nombre de usuario inválido. Usa letras, números o guiones bajos (4-20 caracteres).',
+                                  );
+                                  return;
+                                }
+                                if (!emailRegExp.hasMatch(email)) {
+                                  showToast('Correo electrónico inválido.');
+                                  return;
+                                }
+                                if (!passwordRegExp.hasMatch(password)) {
+                                  showToast(
+                                    'La contraseña debe tener al menos 6 caracteres, incluyendo letras y números.',
+                                  );
+                                  return;
+                                }
+                                setState(() => _isLoading = true);
+                                await AuthService().signup(
+                                  username: username,
+                                  email: email,
+                                  password: password,
                                   context: context,
                                 );
+
+                                setState(() => _isLoading = false);
                               },
-                      style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(15),
                         ),
                         elevation: 3,
                       ),

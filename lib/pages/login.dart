@@ -184,6 +184,38 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      AuthService().signInWithGoogle(context: context);
+                    },
+                    icon: Image.asset(
+                      "lib/assets/icon/google_logo_prueba.webp",
+                      height: 24,
+                      width: 24,
+                    ),
+                    label: Text(
+                      'Sign in with Google',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      elevation: 2,
+                    ),
+                  ),
+
                   const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -191,16 +223,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         "Don't have an account?",
                         style: TextStyle(
-                          color: Color.fromARGB(
-                            255,
-                            184,
-                            183,
-                            183,
-                          ), 
+                          color: Color.fromARGB(255, 184, 183, 183),
                           fontSize: anchoPantalla * 0.04,
                         ),
                       ),
-                      SizedBox(width: 6), 
+                      SizedBox(width: 6),
                       TextButton(
                         onPressed: () {
                           Navigator.push(

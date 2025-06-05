@@ -1,9 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, body_might_complete_normally_nullable
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nipibasket_tupizarravirtual/Boot_page/boot_page.dart';
 import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 
@@ -33,11 +34,7 @@ class AuthService {
       });
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder:
-              (context) =>
-                  BootPage( username: username),
-        ),
+        MaterialPageRoute(builder: (context) => BootPage(username: username)),
       );
     } on FirebaseAuthException catch (e) {
       String message = _handleAuthError(e);
@@ -64,9 +61,8 @@ class AuthService {
         context,
         MaterialPageRoute(
           builder:
-              (context) => BootPage(
-                username: userCredential.user?.displayName ?? '',
-              ),
+              (context) =>
+                  BootPage(username: userCredential.user?.displayName ?? ''),
         ),
       );
     } on FirebaseAuthException catch (e) {
@@ -80,6 +76,74 @@ class AuthService {
         fontSize: 14.0,
       );
     }
+  }
+
+  Future<void> signInWithGoogle({required BuildContext context}) async {
+    try {
+      // Inicia el flujo de autenticación
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        Fluttertoast.showToast(msg: "Inicio de sesión cancelado.");
+        return null;
+      }
+
+      // Obtiene los detalles de autenticación
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Crea las credenciales
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Inicia sesión con Firebase
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+
+      // Agrega o actualiza el usuario en Firestore
+      final user = userCredential.user;
+      if (user != null) {
+        final userDoc = FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid);
+        await userDoc.set({
+          'uid': user.uid,
+          'username': user.displayName,
+          'email': user.email,
+          'photoURL': user.photoURL,
+        }, SetOptions(merge: true));
+        Fluttertoast.showToast(msg: "Inicio de sesión exitoso.");
+      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  BootPage(username: userCredential.user?.displayName ?? ''),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      final String message = _handleAuthError(e);
+      Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.SNACKBAR,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        fontSize: 14.0,
+      );
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Ocurrió un error inesperado: ${e.toString()}",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.SNACKBAR,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 14.0,
+      );
+    }
+    return null;
   }
 
   Future<void> signout({required BuildContext context}) async {
