@@ -1,9 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/pages/signUp.dart';
 import 'package:nipibasket_tupizarravirtual/services/auth_services.dart';
 import 'package:nipibasket_tupizarravirtual/services/forgot_password.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,7 +36,10 @@ class _LoginScreenState extends State<LoginScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+              colors:
+                  Provider.of<ThemeProvider>(context).isDarkMode
+                      ? [Colors.black, Colors.black]
+                      : [Color(0xFF6A11CB), Color(0xFF2575FC)],
             ),
           ),
           child: SingleChildScrollView(
@@ -50,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Bienvenido',
                     style: TextStyle(
-                      fontSize: heightScreen * 0.048,
+                      fontSize: heightScreen * 0.056,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -89,22 +94,42 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       labelText: 'Correo electrónico',
                       prefixIcon: Icon(Icons.email, color: Colors.indigo),
+                      counterStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.black
+                              : Colors.white,
                     ),
+                    maxLength: 35,
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _passwordController,
                     obscureText: obscurePassword,
+                    style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       labelText: 'Contraseña',
@@ -128,7 +153,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.black
+                              : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -148,7 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -193,6 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       color: Color.fromARGB(255, 255, 255, 255),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -201,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       AuthService().signInWithGoogle(context: context);
                     },
                     icon: Image.asset(
-                      "lib/assets/icon/google_logo_prueba.webp",
+                      "lib/assets/icon/google_logo.webp",
                       height: 24,
                       width: 24,
                     ),
@@ -226,7 +256,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       elevation: 2,
                     ),
                   ),
-
                   const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -253,7 +282,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: widthScreen * 0.04,
                           ),
                         ),
-                        child: Text('Regístrate'),
+                        child: Text(
+                          'Regístrate',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),

@@ -43,7 +43,7 @@ class AuthService {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.redAccent,
-        textColor: Colors.black,
+        textColor: const Color.fromARGB(255, 255, 255, 255),
         fontSize: 14.0,
       );
     }
@@ -72,7 +72,7 @@ class AuthService {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.redAccent,
-        textColor: Colors.black,
+        textColor: const Color.fromARGB(255, 255, 255, 255),
         fontSize: 14.0,
       );
     }
@@ -138,7 +138,7 @@ class AuthService {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.redAccent,
-        textColor: Colors.black,
+        textColor: const Color.fromARGB(255, 255, 255, 255),
         fontSize: 14.0,
       );
     } catch (e) {
@@ -147,7 +147,7 @@ class AuthService {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.redAccent,
-        textColor: Colors.black,
+        textColor: const Color.fromARGB(255, 255, 255, 255),
         fontSize: 14.0,
       );
     }

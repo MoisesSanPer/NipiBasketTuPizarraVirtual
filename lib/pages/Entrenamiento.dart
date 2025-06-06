@@ -50,6 +50,7 @@ class Entrenamiento extends StatelessWidget {
               final entrenamientoActual = entrenamiento[index];
               return Card(
                 elevation: 3,
+                
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -332,7 +333,7 @@ class Entrenamiento extends StatelessWidget {
                       decoration: const InputDecoration(
                         labelText: 'Nombre del entrenamiento',
                       ),
-                      maxLength: 15,
+                      maxLength: 20,
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 20),

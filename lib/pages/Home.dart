@@ -107,12 +107,23 @@ class _HomeState extends State<Home> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.2),
+                          color:
+                              Provider.of<ThemeProvider>(context).isDarkMode
+                                  ? const Color.fromARGB(
+                                    255,
+                                    184,
+                                    198,
+                                    209,
+                                  ).withOpacity(0.2)
+                                  : Colors.blue.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.help,
-                          color: Color.fromARGB(255, 25, 62, 92),
+                          color:
+                              Provider.of<ThemeProvider>(context).isDarkMode
+                                  ? const Color.fromARGB(255, 150, 162, 172)
+                                  : const Color.fromARGB(255, 25, 62, 92),
                           size: 28,
                         ),
                       ),
@@ -135,10 +146,13 @@ class _HomeState extends State<Home> {
                         // Información de la aplicación lo hago en metodo auxiliar para que se mas limpio el codigo refactorizando
                         titleInfo("Versión", "Beta v-1.3.0"),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           "Aplicación para la gestión de entrenamientos de baloncesto.",
                           style: TextStyle(
-                            color: Color.fromARGB(255, 70, 70, 70),
+                            color:
+                                Provider.of<ThemeProvider>(context).isDarkMode
+                                    ? Color.fromARGB(255, 255, 253, 253)
+                                    : Color.fromARGB(255, 70, 70, 70),
                             fontSize: 16,
                           ),
                         ),
@@ -193,10 +207,13 @@ class _HomeState extends State<Home> {
       children: [
         Text(
           title.toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 119, 119, 119),
+            color:
+                Provider.of<ThemeProvider>(context).isDarkMode
+                    ? Colors.blue
+                    : Color.fromARGB(255, 119, 119, 119),
           ),
         ),
         const SizedBox(height: 4),
@@ -244,11 +261,14 @@ class _HomeState extends State<Home> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "Soporte técnico",
                   style: TextStyle(
                     fontSize: 12,
-                    color: Color.fromARGB(255, 94, 93, 93),
+                    color:
+                        Provider.of<ThemeProvider>(context).isDarkMode
+                            ? Color.fromARGB(255, 255, 253, 253)
+                            : Color.fromARGB(255, 94, 93, 93),
                   ),
                 ),
                 Text(

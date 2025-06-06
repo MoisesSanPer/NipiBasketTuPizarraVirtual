@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 import 'package:nipibasket_tupizarravirtual/services/auth_services.dart';
+import 'package:provider/provider.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -16,6 +18,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  //Expresiones regulares para validar los campos de texto sacadas de Internet
   final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_]{4,20}$');
   final RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
   final RegExp passwordRegExp = RegExp(
@@ -29,12 +32,11 @@ class _SignUpState extends State<SignUp> {
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.black87,
-      textColor: Colors.white,
+      backgroundColor: const Color.fromARGB(221, 255, 0, 0),
+      textColor: const Color.fromARGB(255, 255, 255, 255),
       fontSize: 14.0,
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,10 @@ class _SignUpState extends State<SignUp> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+              colors:
+                  Provider.of<ThemeProvider>(context).isDarkMode
+                      ? [Colors.black, Colors.black]
+                      : [Color(0xFF6A11CB), Color(0xFF2575FC)],
             ),
           ),
           child: SingleChildScrollView(
@@ -106,6 +111,12 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _usernameController,
+                    style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       labelText: 'Usuario',
@@ -114,14 +125,28 @@ class _SignUpState extends State<SignUp> {
                         borderRadius: BorderRadius.circular(15),
                         borderSide: BorderSide(color: Colors.grey),
                       ),
+                      counterStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.black
+                              : Colors.white,
                     ),
+                    maxLength: 20,
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       //Para que cuando suba el texto no se vea el label y no se bugue
                       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -131,14 +156,28 @@ class _SignUpState extends State<SignUp> {
                         borderRadius: BorderRadius.circular(15),
                         borderSide: BorderSide(color: Colors.grey),
                       ),
+                      counterStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.black
+                              : Colors.white,
                     ),
+                    maxLength: 35,
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _passwordController,
                     obscureText: obscurePassword,
+                    style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       labelText: 'Contraseña',
@@ -162,45 +201,48 @@ class _SignUpState extends State<SignUp> {
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.black
+                              : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 15),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
-                          ),
-                        );
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '¿Ya tiene una cuenta?',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 189, 187, 187),
-                              fontSize: widthScreen * 0.04,
-                            ),
-                          ),
-                          Text(
-                            'Iniciar sesión',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.95),
-                              fontSize: widthScreen * 0.045,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "¿Ya tiene una cuenta?",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 184, 183, 183),
+                          fontSize: widthScreen * 0.04,
+                        ),
                       ),
-                    ),
+                      SizedBox(width: 6),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: widthScreen * 0.04,
+                          ),
+                        ),
+                        child: Text(
+                          'Iniciar sesión',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-
+                  const SizedBox(height: 15),
                   SizedBox(
                     width: double.infinity,
                     height: 40,
@@ -240,10 +282,10 @@ class _SignUpState extends State<SignUp> {
 
                                 setState(() => isLoading = false);
                               },
-                        style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                         elevation: 3,
                       ),
