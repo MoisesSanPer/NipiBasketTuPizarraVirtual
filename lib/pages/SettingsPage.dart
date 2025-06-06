@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() => isUpdatingFoto = true);
     try {
       // Solicita permisos para acceder a la galería de fotos
-      final permission = await Permission.storage.request();
+      final permission = await Permission.photos.request();
       // Si el permiso no es concedido, abre la configuración de ajustes
       if (!permission.isGranted) {
         await openAppSettings();
