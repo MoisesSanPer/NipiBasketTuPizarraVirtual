@@ -7,7 +7,6 @@ import 'package:nipibasket_tupizarravirtual/pages/Ejercicios.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Entrenamiento.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Jugadas.dart';
 import 'package:nipibasket_tupizarravirtual/pages/SettingsPage.dart';
-import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 import 'package:nipibasket_tupizarravirtual/pages/pizarra.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
@@ -40,7 +39,7 @@ Widget build(BuildContext context) {
       // Redirige a la pantalla de inicio de sesión y elimina todas las rutas anteriores
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()), 
+        MaterialPageRoute(builder: (context) => Wrap()), 
         (Route<dynamic> route) => false,
       );
       return false; 
