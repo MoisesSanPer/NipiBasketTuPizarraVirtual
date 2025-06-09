@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
-import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:nipibasket_tupizarravirtual/services/wrapper.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -32,7 +32,7 @@ class AppRoot extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const LoginScreen(),
+      home: const Wrapper(),
     );
     
   }
