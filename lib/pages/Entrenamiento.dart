@@ -7,17 +7,16 @@ import 'package:flutter/services.dart';
 import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/Entrenamientos.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
 import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class Entrenamiento extends StatelessWidget {
   final EntrenamientoService entrenamientoService;
-  const Entrenamiento({
-    super.key,
-    required this.entrenamientoService,
-  });
+  const Entrenamiento({super.key, required this.entrenamientoService});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +49,7 @@ class Entrenamiento extends StatelessWidget {
               final entrenamientoActual = entrenamiento[index];
               return Card(
                 elevation: 3,
-                
+
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -81,9 +80,9 @@ class Entrenamiento extends StatelessWidget {
                                     context: context,
                                     builder:
                                         (context) => AlertDialog(
-                                          title: const Text(
-                                            "Ejercicios del Entrenamiento",
-                                            style: TextStyle(
+                                          title: Text(
+                                            "Detalles del ${entrenamientoActual.nombre} ",
+                                            style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color:
                                                   Colors
@@ -312,7 +311,9 @@ class Entrenamiento extends StatelessWidget {
 
   Future<void> showAddDialog(BuildContext context) async {
     final nameController = TextEditingController();
-    final ejerciciosServices = EjerciciosServices(FirebaseAuth.instance.currentUser!);
+    final ejerciciosServices = EjerciciosServices(
+      FirebaseAuth.instance.currentUser!,
+    );
     final jugadasServices = JugadasServices(FirebaseAuth.instance.currentUser!);
     final selectedEjercicioRefs = <DocumentReference>[];
     final selectedJugadasRefs = <DocumentReference>[]; // Lista de referencias
@@ -424,7 +425,15 @@ class Entrenamiento extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Color.fromARGB(255, 147, 15, 199),
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -470,7 +479,7 @@ class Entrenamiento extends StatelessWidget {
                     }
                   },
                   child: const Text(
-                    'Añadir',
+                    'Añadir Entrenamiento',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -487,7 +496,9 @@ class Entrenamiento extends StatelessWidget {
     Entrenamientos entrenamiento,
   ) async {
     final nameController = TextEditingController(text: entrenamiento.nombre);
-    final ejerciciosServices = EjerciciosServices(FirebaseAuth.instance.currentUser!);
+    final ejerciciosServices = EjerciciosServices(
+      FirebaseAuth.instance.currentUser!,
+    );
     final jugadasServices = JugadasServices(FirebaseAuth.instance.currentUser!);
     // Lista de referencias a ejercicios seleccionados
     // Inicializa la lista de referencias con los ejercicios actuales del entrenamiento
@@ -612,7 +623,15 @@ class Entrenamiento extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Color.fromARGB(255, 147, 15, 199),
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

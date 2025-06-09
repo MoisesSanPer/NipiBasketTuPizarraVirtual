@@ -4,31 +4,31 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nipibasket_tupizarravirtual/models/Jugada.class.dart';
-import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart'show ThemeProvider;
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart'
+    show ThemeProvider;
 import 'package:nipibasket_tupizarravirtual/pages/VideoPlayer.dart';
 import 'package:nipibasket_tupizarravirtual/services/JugadasServices.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+
 class Jugadas extends StatefulWidget {
   final JugadasServices jugadasServices;
 
-  const Jugadas({
-    super.key,
-    required this.jugadasServices,
-  });
+  const Jugadas({super.key, required this.jugadasServices});
 
   @override
   State<Jugadas> createState() => _JugadasState();
 }
+
 class _JugadasState extends State<Jugadas> {
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => agregarJugada(context),
         backgroundColor: Colors.deepPurple,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -173,12 +173,13 @@ class _JugadasState extends State<Jugadas> {
       ),
     );
   }
-  
+
   // Método para mostrar el diálogo de agregar ejercicio
   void agregarJugada(BuildContext context) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
-    TipoJugada? tipoSeleccionado = TipoJugada.ataque; // Tipo de jugada por defecto
+    TipoJugada? tipoSeleccionado =
+        TipoJugada.ataque; // Tipo de jugada por defecto
     File? selectedVideo;
     showDialog(
       context: context,
@@ -206,15 +207,22 @@ class _JugadasState extends State<Jugadas> {
                     selectedVideo = File(video.path);
                   });
                 }
-              } else if (permission.isDenied || permission.isPermanentlyDenied) {
+              } else if (permission.isDenied ||
+                  permission.isPermanentlyDenied) {
                 await openAppSettings();
               }
             }
 
             return AlertDialog(
-              title: const Text(
-                'Nueva Jugada',
-                style: TextStyle(color: Colors.deepPurple, fontSize: 22),
+              title: Text(
+                'Añadir Jugada',
+                style: TextStyle(
+                  color:
+                      Provider.of<ThemeProvider>(context).isDarkMode
+                          ? Colors.white
+                          : Colors.deepPurple,
+                  fontSize: 22,
+                ),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -233,7 +241,7 @@ class _JugadasState extends State<Jugadas> {
                         ),
                       ),
                       style: const TextStyle(fontSize: 16),
-                       maxLength: 20,
+                      maxLength: 20,
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 16),
@@ -251,7 +259,7 @@ class _JugadasState extends State<Jugadas> {
                       ),
                       maxLines: 3,
                       style: const TextStyle(fontSize: 16),
-                       maxLength: 40,
+                      maxLength: 40,
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     ),
                     const SizedBox(height: 16),
@@ -259,7 +267,7 @@ class _JugadasState extends State<Jugadas> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Tipo de ejercicio:',
+                          'Tipo de jugada:',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
@@ -287,7 +295,7 @@ class _JugadasState extends State<Jugadas> {
                             });
                           },
                           title: const Text('Defensa'),
-                        ),   
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -296,7 +304,15 @@ class _JugadasState extends State<Jugadas> {
                       onPressed: () async {
                         await subirVideo();
                       },
-                      child: const Text('Seleccionar Video'),
+                      child: Text(
+                        'Seleccionar Jugada (Video)',
+                        style: TextStyle(
+                          color:
+                              Provider.of<ThemeProvider>(context).isDarkMode
+                                  ? Colors.white
+                                  : Colors.deepPurple,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     // Vista previa del video seleccionado
@@ -312,10 +328,13 @@ class _JugadasState extends State<Jugadas> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text(
+                  child: Text(
                     'Cancelar',
                     style: TextStyle(
-                      color: Color.fromARGB(255, 147, 15, 199),
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Color.fromARGB(255, 147, 15, 199),
                       fontSize: 16,
                     ),
                   ),
@@ -323,8 +342,13 @@ class _JugadasState extends State<Jugadas> {
                 ElevatedButton(
                   onPressed: () async {
                     if (nameController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('El nombre es requerido')),
+                      Fluttertoast.showToast(
+                        msg: 'El nombre es requerido',
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.SNACKBAR,
+                        backgroundColor: Colors.redAccent,
+                        textColor: const Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 14.0,
                       );
                       return;
                     }
@@ -348,7 +372,7 @@ class _JugadasState extends State<Jugadas> {
                         return;
                       }
                     }
-                   final nuevaJugada = Jugada(
+                    final nuevaJugada = Jugada(
                       id: nuevoId,
                       nombre: nameController.text,
                       descripcion: descriptionController.text,
@@ -385,5 +409,3 @@ class _JugadasState extends State<Jugadas> {
     );
   }
 }
-
-

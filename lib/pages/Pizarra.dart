@@ -23,9 +23,10 @@ class _PizarraState extends State<Pizarra> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Pizarra Táctica',
+          'ÑipiBasket Tu Pizarra Virtual',
           style: TextStyle(color: Colors.white),
         ),
+        centerTitle: true,
         leading: null,
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(255, 46, 127, 168),
@@ -111,7 +112,7 @@ class _PizarraState extends State<Pizarra> {
           ),
           // Herramientas flotantes para cambiar color y grosor del trazo
           Positioned(
-            bottom: 10,
+            bottom: 4,
             left: 0,
             right: 0,
             child: Row(
@@ -140,8 +141,8 @@ class _PizarraState extends State<Pizarra> {
                             // Crea un contenedor circular con el color seleccionado segun el del array
                             child: Container(
                               margin: const EdgeInsets.all(4),
-                              width: 30,
-                              height: 30,
+                              width: 25,
+                              height: 25,
                               decoration: BoxDecoration(
                                 color: color,
                                 shape: BoxShape.circle,

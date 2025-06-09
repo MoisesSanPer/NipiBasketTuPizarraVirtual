@@ -110,7 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error:  no has seleccionado una imagen o no tienes permisos para acceder a la galería')));
+        ).showSnackBar(SnackBar(content: Text('Error:  no has seleccionado ninguna imagen')));
       }
     } finally {
       // Independientemente de si la operación fue exitosa o no, actualiza el estado para indicar que ya no se está actualizando la foto

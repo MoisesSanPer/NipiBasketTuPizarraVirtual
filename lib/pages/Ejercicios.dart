@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nipibasket_tupizarravirtual/models/Ejercicio.class.dart';
 import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
@@ -213,9 +214,15 @@ class _EjerciciosState extends State<Ejercicios> {
             }
 
             return AlertDialog(
-              title: const Text(
-                'Nuevo Ejercicio',
-                style: TextStyle(color: Colors.deepPurple, fontSize: 22),
+              title: Text(
+                'Añadir Ejercicio',
+                style: TextStyle(
+                  color:
+                      Provider.of<ThemeProvider>(context).isDarkMode
+                          ? Colors.white
+                          : Colors.deepPurple,
+                  fontSize: 22,
+                ),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -327,7 +334,15 @@ class _EjerciciosState extends State<Ejercicios> {
                       onPressed: () async {
                         await subirVideo();
                       },
-                      child: const Text('Seleccionar Video'),
+                      child: Text(
+                        'Seleccionar ejercicio (video)',
+                        style: TextStyle(
+                          color:
+                              Provider.of<ThemeProvider>(context).isDarkMode
+                                  ? Colors.white
+                                  : Colors.deepPurple,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     // Vista previa del video seleccionado
@@ -343,10 +358,13 @@ class _EjerciciosState extends State<Ejercicios> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text(
+                  child: Text(
                     'Cancelar',
                     style: TextStyle(
-                      color: Color.fromARGB(255, 147, 15, 199),
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Color.fromARGB(255, 147, 15, 199),
                       fontSize: 16,
                     ),
                   ),
@@ -354,8 +372,13 @@ class _EjerciciosState extends State<Ejercicios> {
                 ElevatedButton(
                   onPressed: () async {
                     if (nameController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('El nombre es requerido')),
+                      Fluttertoast.showToast(
+                        msg: 'El nombre es requerido',
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.SNACKBAR,
+                        backgroundColor: Colors.redAccent,
+                        textColor: const Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 14.0,
                       );
                       return;
                     }

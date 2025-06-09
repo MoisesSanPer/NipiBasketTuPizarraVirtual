@@ -5,7 +5,9 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nipibasket_tupizarravirtual/models/Event.class.dart';
+import 'package:nipibasket_tupizarravirtual/models/ThemeProvider.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -245,7 +247,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Cancelar'),
+                child: Text('Cerrar',style: TextStyle(
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Color.fromARGB(255, 147, 15, 199),
+                    ),),
               ),
             ],
           ),
@@ -267,6 +274,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     setState(() {
       listevents = Map.from(listevents);
     });
+    // Guardar los eventos actualizados en SharedPreferences
     guardarEvents();
   }
 }
