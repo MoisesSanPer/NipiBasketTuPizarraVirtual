@@ -7,6 +7,7 @@ import 'package:nipibasket_tupizarravirtual/pages/Ejercicios.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Entrenamiento.dart';
 import 'package:nipibasket_tupizarravirtual/pages/Jugadas.dart';
 import 'package:nipibasket_tupizarravirtual/pages/SettingsPage.dart';
+import 'package:nipibasket_tupizarravirtual/pages/login.dart';
 import 'package:nipibasket_tupizarravirtual/pages/pizarra.dart';
 import 'package:nipibasket_tupizarravirtual/services/EjerciciosServices.dart';
 import 'package:nipibasket_tupizarravirtual/services/EntrenamietoService.dart';
@@ -31,17 +32,29 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
+ @override
+Widget build(BuildContext context) {
+  // Cuando se clicke el boton de retroceso, se redirige a la pantalla de inicio de sesión
+  return WillPopScope(
+    onWillPop: () async {
+      // Redirige a la pantalla de inicio de sesión y elimina todas las rutas anteriores
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()), 
+        (Route<dynamic> route) => false,
+      );
+      return false; 
+    },
+    child: DefaultTabController(
       length: 5,
       child: Scaffold(
         appBar: _appbar,
         body: _body,
         bottomNavigationBar: _tabBar,
       ),
-    );
-  }
+    ),
+  );
+}
 
   AppBar get _appbar => AppBar(
     //El appbar tiene un color que cambia dependiendo del modo oscuro
